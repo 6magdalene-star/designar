@@ -204,6 +204,7 @@
     gap: 10px;
     overflow-y: auto;
     scrollbar-width: none;
+    transition: transform 0.3s ease, opacity 0.3s ease;
   }
 
   .panel-section {
@@ -714,14 +715,20 @@
     <button class="mode-btn active" onclick="setMode('interior')">🏠 Wnętrze</button>
     <button class="mode-btn" onclick="setMode('garden')">🌿 Ogród</button>
   </div>
-  <div class="status-pill">
-    <div class="status-dot" id="statusDot"></div>
-    <span id="statusText">Symulacja</span>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <button class="status-pill" id="cameraBtn" onclick="startCamera()" style="cursor:pointer;border:none;">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText">📷 Kamera</span>
+    </button>
   </div>
 </div>
 
 <!-- Left Tools -->
 <div class="left-panel">
+  <div class="tool-btn" onclick="togglePanel()" id="panelOpenBtn" style="display:none;">
+    ☰
+    <div class="tooltip">Otwórz panel</div>
+  </div>
   <div class="tool-btn active" id="toolPlace" onclick="setTool('place')">
     ➕
     <div class="tooltip">Dodaj element</div>
@@ -754,6 +761,10 @@
 
 <!-- Right Panel -->
 <div class="right-panel" id="rightPanel">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:0 4px 6px;">
+    <span style="font-size:11px;color:rgba(253,250,246,0.4);letter-spacing:0.1em;text-transform:uppercase;">Panel</span>
+    <button onclick="togglePanel()" style="background:rgba(253,250,246,0.1);border:1px solid rgba(253,250,246,0.2);border-radius:8px;color:white;padding:4px 10px;font-size:12px;cursor:pointer;" id="panelToggleBtn">✕ Zamknij</button>
+  </div>
   <!-- Interior mode -->
   <div id="interiorPanel">
     <div class="panel-section">
@@ -1379,8 +1390,26 @@ function showGardenTab(tab) {
   document.getElementById('tab-' + tab).classList.add('active');
 }
 
+// ===== PANEL TOGGLE =====
+let panelVisible = true;
+function togglePanel() {
+  panelVisible = !panelVisible;
+  const panel = document.getElementById('rightPanel');
+  const openBtn = document.getElementById('panelOpenBtn');
+  if (panelVisible) {
+    panel.style.transform = 'translateX(0)';
+    panel.style.opacity = '1';
+    openBtn.style.display = 'none';
+  } else {
+    panel.style.transform = 'translateX(110%)';
+    panel.style.opacity = '0';
+    openBtn.style.display = 'flex';
+  }
+}
+
 // ===== CAMERA =====
 async function startCamera() {
+  if (cameraActive) { showToast('Kamera już działa!'); return; }
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
@@ -1391,15 +1420,17 @@ async function startCamera() {
     document.getElementById('cameraPlaceholder').style.display = 'none';
     cameraActive = true;
     document.getElementById('statusDot').classList.add('live');
-    document.getElementById('statusText').textContent = 'Kamera AR';
+    document.getElementById('statusText').textContent = '✅ AR działa';
+    document.getElementById('cameraBtn').style.borderColor = 'var(--sage)';
     showToast('📷 Kamera aktywna! Możesz teraz projektować w AR');
     render();
   } catch (err) {
     if (err.name === 'NotAllowedError') {
-      showToast('🚫 Brak dostępu do kamery — używam trybu symulacji');
+      showToast('🚫 Zezwól na dostęp do kamery w ustawieniach przeglądarki');
     } else {
-      showToast('📷 Kamera niedostępna — tryb symulacji aktywny');
+      showToast('📷 Kamera niedostępna — sprawdź ustawienia telefonu');
     }
+    document.getElementById('statusText').textContent = '❌ Brak kamery';
     console.log('Camera error:', err);
   }
 }
