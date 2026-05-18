@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DesignAR – Wnętrza & Ogrody</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f5f0e8;
+    --sage: #7a9e7e;
+    --sage-dark: #4a6741;
+    --terra: #c4774a;
+    --stone: #8e8278;
+    --charcoal: #2a2520;
+    --sand: #d9cfc2;
+    --white: #fdfaf6;
+    --glass: rgba(253,250,246,0.12);
+    --glass-border: rgba(253,250,246,0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--charcoal);
+    color: var(--white);
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* === CAMERA FEED === */
+  #cameraFeed {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  #canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    cursor: crosshair;
+  }
+
+  /* === OVERLAY GRADIENT === */
+  .overlay-vignette {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(30,25,20,0.55) 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* === TOP BAR === */
+  .top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: linear-gradient(to bottom, rgba(30,25,20,0.85) 0%, transparent 100%);
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: var(--cream);
+  }
+
+  .logo span { color: var(--sage); font-weight: 600; }
+
+  .mode-toggle {
+    display: flex;
+    gap: 4px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
+    padding: 4px;
+    backdrop-filter: blur(12px);
+  }
+
+  .mode-btn {
+    padding: 7px 18px;
+    border-radius: 100px;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background: transparent;
+    color: rgba(253,250,246,0.6);
+  }
+
+  .mode-btn.active {
+    background: var(--sage);
+    color: var(--white);
+    box-shadow: 0 2px 12px rgba(122,158,126,0.4);
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
+    backdrop-filter: blur(12px);
+    font-size: 12px;
+    color: rgba(253,250,246,0.7);
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--terra);
+    animation: pulse 2s infinite;
+  }
+  .status-dot.live { background: #6dbf7e; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.8); }
+  }
+
+  /* === LEFT PANEL === */
+  .left-panel {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+  }
+
+  .tool-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.25s ease;
+    position: relative;
+  }
+
+  .tool-btn:hover, .tool-btn.active {
+    background: rgba(122,158,126,0.3);
+    border-color: var(--sage);
+    transform: scale(1.08);
+  }
+
+  .tool-btn .tooltip {
+    position: absolute;
+    left: 60px;
+    white-space: nowrap;
+    background: rgba(30,25,20,0.9);
+    color: var(--cream);
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .tool-btn:hover .tooltip { opacity: 1; }
+
+  /* === RIGHT PANEL === */
+  .right-panel {
+    position: fixed;
+    right: 0;
+    top: 80px;
+    bottom: 80px;
+    z-index: 10;
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    gap: 10px;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .panel-section {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    backdrop-filter: blur(16px);
+    overflow: hidden;
+  }
+
+  .panel-header {
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(253,250,246,0.5);
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* === FURNITURE GRID === */
+  .furniture-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .furniture-item {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+    background: rgba(253,250,246,0.06);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 22px;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .furniture-item span {
+    font-size: 9px;
+    color: rgba(253,250,246,0.5);
+    font-family: 'DM Sans', sans-serif;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .furniture-item:hover {
+    background: rgba(122,158,126,0.2);
+    border-color: var(--sage);
+    transform: scale(1.05);
+  }
+
+  .furniture-item.selected {
+    background: rgba(122,158,126,0.3);
+    border-color: var(--sage);
+    box-shadow: 0 0 12px rgba(122,158,126,0.3);
+  }
+
+  /* === COLOR SWATCHES === */
+  .color-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .color-swatch {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .color-swatch:hover { transform: scale(1.15); }
+  .color-swatch.selected { border-color: var(--white); box-shadow: 0 0 0 2px var(--sage); }
+
+  /* === SLIDERS === */
+  .slider-row {
+    padding: 8px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .slider-label {
+    font-size: 11px;
+    color: rgba(253,250,246,0.5);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 3px;
+    background: rgba(253,250,246,0.15);
+    border-radius: 10px;
+    outline: none;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--sage);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(122,158,126,0.5);
+  }
+
+  /* === BOTTOM BAR === */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 16px 24px;
+    background: linear-gradient(to top, rgba(30,25,20,0.85) 0%, transparent 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .action-btn {
+    padding: 10px 22px;
+    border-radius: 100px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .action-btn:hover { background: rgba(122,158,126,0.25); border-color: var(--sage); }
+  .action-btn.primary { background: var(--sage); border-color: var(--sage-dark); }
+  .action-btn.primary:hover { background: var(--sage-dark); }
+  .action-btn.danger { background: rgba(196,119,74,0.2); border-color: var(--terra); }
+
+  /* === PLACED OBJECTS ON CANVAS === */
+  .placed-object {
+    position: absolute;
+    cursor: grab;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    user-select: none;
+    touch-action: none;
+    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5));
+    transition: filter 0.2s;
+  }
+
+  .placed-object:active { cursor: grabbing; }
+  .placed-object.selected-obj { filter: drop-shadow(0 0 12px rgba(122,158,126,0.8)) drop-shadow(0 8px 20px rgba(0,0,0,0.5)); }
+
+  .placed-object .obj-emoji { font-size: 52px; line-height: 1; }
+  .placed-object .obj-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.7);
+    background: rgba(0,0,0,0.5);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .placed-object .resize-handle {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 14px;
+    height: 14px;
+    background: var(--sage);
+    border-radius: 50%;
+    cursor: se-resize;
+    border: 2px solid white;
+    display: none;
+  }
+
+  .placed-object.selected-obj .resize-handle { display: block; }
+
+  /* === WALL COLOR OVERLAY === */
+  #wallOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    mix-blend-mode: multiply;
+  }
+
+  /* === CAMERA PLACEHOLDER === */
+  #cameraPlaceholder {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a1510 0%, #2a2a1a 50%, #1a1510 100%);
+    gap: 20px;
+  }
+
+  .room-sim {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    overflow: hidden;
+  }
+
+  .room-floor {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 42%;
+    background: linear-gradient(to bottom, #5a4e3a, #3a3020);
+    transform: perspective(600px) rotateX(15deg);
+    transform-origin: bottom;
+  }
+
+  .room-wall-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 62%;
+    background: linear-gradient(to bottom, #3d3525 0%, #4a3d28 100%);
+    transition: background 0.8s ease;
+  }
+
+  .room-wall-left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 22%;
+    height: 62%;
+    background: linear-gradient(to right, #2a2018, #3d3525);
+    transform-origin: left;
+    transform: skewY(-8deg);
+    transition: background 0.8s ease;
+  }
+
+  .room-shadow {
+    position: absolute;
+    bottom: 40%;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: rgba(0,0,0,0.4);
+    filter: blur(6px);
+  }
+
+  .room-window {
+    position: absolute;
+    top: 12%;
+    right: 18%;
+    width: 140px;
+    height: 180px;
+    border: 3px solid #6a5a3a;
+    background: linear-gradient(135deg, rgba(180,200,240,0.3) 0%, rgba(200,230,255,0.2) 100%);
+    box-shadow: inset 0 0 30px rgba(180,220,255,0.1);
+  }
+
+  .room-window::after {
+    content: '';
+    position: absolute;
+    left: 50%; top: 0; bottom: 0;
+    width: 2px; background: #6a5a3a;
+  }
+  .room-window::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 0; right: 0;
+    height: 2px; background: #6a5a3a;
+  }
+
+  .start-camera-btn {
+    position: relative;
+    z-index: 10;
+    padding: 14px 32px;
+    background: var(--sage);
+    border: none;
+    border-radius: 100px;
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 24px rgba(122,158,126,0.4);
+  }
+
+  .start-camera-btn:hover {
+    background: var(--sage-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(122,158,126,0.5);
+  }
+
+  .sim-label {
+    position: relative;
+    z-index: 10;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    color: rgba(253,250,246,0.5);
+    letter-spacing: 0.1em;
+  }
+
+  /* === NOTIFICATION TOAST === */
+  .toast {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: rgba(30,25,20,0.95);
+    border: 1px solid var(--sage);
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 13px;
+    color: var(--cream);
+    z-index: 100;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    backdrop-filter: blur(12px);
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* === OBJECT CONTROLS === */
+  .obj-controls {
+    position: fixed;
+    z-index: 20;
+    background: rgba(30,25,20,0.9);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    backdrop-filter: blur(12px);
+    padding: 6px;
+    display: none;
+    gap: 4px;
+  }
+
+  .obj-controls.visible { display: flex; }
+
+  .obj-ctrl-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--white);
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+
+  .obj-ctrl-btn:hover { background: rgba(122,158,126,0.3); }
+  .obj-ctrl-btn.del:hover { background: rgba(196,119,74,0.3); }
+
+  /* Garden panel tabs */
+  .tab-row {
+    display: flex;
+    padding: 8px 10px 4px;
+    gap: 4px;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 5px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: rgba(253,250,246,0.5);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .tab.active {
+    background: rgba(122,158,126,0.2);
+    border-color: var(--sage);
+    color: var(--white);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Screenshot flash */
+  .flash {
+    position: fixed;
+    inset: 0;
+    background: white;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.05s;
+  }
+
+  .flash.go { opacity: 0.8; }
+
+  /* Erase drawing rect preview */
+  #erasePreview {
+    position: fixed;
+    border: 2px dashed var(--terra);
+    background: rgba(196,119,74,0.15);
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 5;
+    display: none;
+  }
+
+  /* Erased zones list */
+  .erase-zone-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: rgba(253,250,246,0.7);
+    border-bottom: 1px solid rgba(253,250,246,0.06);
+  }
+  .erase-zone-item:last-child { border-bottom: none; }
+  .erase-zone-restore {
+    background: none;
+    border: 1px solid var(--terra);
+    color: var(--terra);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 10px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .erase-zone-restore:hover { background: rgba(196,119,74,0.2); }
+
+  /* Erase instructions banner */
+  .erase-banner {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 15;
+    background: rgba(196,119,74,0.92);
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 13px;
+    color: white;
+    display: none;
+    backdrop-filter: blur(8px);
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .erase-banner.visible { display: block; }
+</style>
+</head>
+<body>
+
+<!-- Camera or Simulated Room -->
+<div id="cameraPlaceholder">
+  <div class="room-sim">
+    <div class="room-wall-back" id="simWall"></div>
+    <div class="room-wall-left"></div>
+    <div class="room-floor"></div>
+    <div class="room-shadow"></div>
+    <div class="room-window"></div>
+  </div>
+  <p class="sim-label">Tryb symulacji pokoju</p>
+  <button class="start-camera-btn" onclick="startCamera()">📷 Uruchom kamerę AR</button>
+</div>
+
+<video id="cameraFeed" autoplay playsinline style="display:none;"></video>
+<canvas id="canvas"></canvas>
+<div id="wallOverlay"></div>
+<div class="overlay-vignette"></div>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="logo">Design<span>AR</span></div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="setMode('interior')">🏠 Wnętrze</button>
+    <button class="mode-btn" onclick="setMode('garden')">🌿 Ogród</button>
+  </div>
+  <div class="status-pill">
+    <div class="status-dot" id="statusDot"></div>
+    <span id="statusText">Symulacja</span>
+  </div>
+</div>
+
+<!-- Left Tools -->
+<div class="left-panel">
+  <div class="tool-btn active" id="toolPlace" onclick="setTool('place')">
+    ➕
+    <div class="tooltip">Dodaj element</div>
+  </div>
+  <div class="tool-btn" id="toolMove" onclick="setTool('move')">
+    ✋
+    <div class="tooltip">Przesuń</div>
+  </div>
+  <div class="tool-btn" id="toolPaint" onclick="setTool('paint')">
+    🎨
+    <div class="tooltip">Maluj ścianę</div>
+  </div>
+  <div class="tool-btn" id="toolErase" onclick="setTool('erase')">
+    🪄
+    <div class="tooltip">Ukryj mebel (narysuj prostokąt)</div>
+  </div>
+  <div class="tool-btn" id="toolDelete" onclick="setTool('delete')">
+    🗑️
+    <div class="tooltip">Usuń wirtualny element</div>
+  </div>
+  <div class="tool-btn" onclick="clearAll()">
+    ↩️
+    <div class="tooltip">Wyczyść</div>
+  </div>
+  <div class="tool-btn" onclick="takeScreenshot()">
+    📸
+    <div class="tooltip">Zrzut ekranu</div>
+  </div>
+</div>
+
+<!-- Right Panel -->
+<div class="right-panel" id="rightPanel">
+  <!-- Interior mode -->
+  <div id="interiorPanel">
+    <div class="panel-section">
+      <div class="panel-header">🪑 Meble</div>
+      <div class="furniture-grid" id="furnitureGrid"></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-header">🎨 Kolor ścian</div>
+      <div class="color-grid" id="wallColors"></div>
+      <div class="slider-row">
+        <div class="slider-label"><span>Intensywność</span><span id="wallOpacityVal">40%</span></div>
+        <input type="range" min="10" max="80" value="40" id="wallOpacity" oninput="updateWallOpacity(this.value)">
+      </div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-header">✨ Oświetlenie</div>
+      <div class="slider-row">
+        <div class="slider-label"><span>Jasność</span><span id="brightnessVal">100%</span></div>
+        <input type="range" min="50" max="150" value="100" id="brightness" oninput="updateBrightness(this.value)">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label"><span>Ciepłota</span><span id="warmthVal">0°</span></div>
+        <input type="range" min="-30" max="30" value="0" id="warmth" oninput="updateWarmth(this.value)">
+      </div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-header">🪄 Ukryte meble <span id="eraseCount" style="margin-left:auto;font-size:10px;color:var(--terra)"></span></div>
+      <div id="eraseZonesList"><div style="padding:10px 14px;font-size:11px;color:rgba(253,250,246,0.35);">Użyj narzędzia 🪄 aby ukryć prawdziwe meble</div></div>
+    </div>
+  </div>
+
+  <!-- Garden mode -->
+  <div id="gardenPanel" style="display:none;">
+    <div class="panel-section">
+      <div class="panel-header">🌿 Elementy ogrodu</div>
+      <div class="tab-row">
+        <button class="tab active" onclick="showGardenTab('plants')">Rośliny</button>
+        <button class="tab" onclick="showGardenTab('archi')">Architektura</button>
+        <button class="tab" onclick="showGardenTab('deco')">Dekor</button>
+      </div>
+      <div id="tab-plants" class="tab-content active">
+        <div class="furniture-grid" id="plantsGrid"></div>
+      </div>
+      <div id="tab-archi" class="tab-content">
+        <div class="furniture-grid" id="archiGrid"></div>
+      </div>
+      <div id="tab-deco" class="tab-content">
+        <div class="furniture-grid" id="decoGrid"></div>
+      </div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-header">🌱 Podłoże</div>
+      <div class="color-grid" id="groundColors"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Bar -->
+<div class="bottom-bar">
+  <button class="action-btn" onclick="setTool('move')">✋ Przesuń meble</button>
+  <button class="action-btn primary" id="mainActionBtn" onclick="showTip()">💡 Wskazówka AR</button>
+  <button class="action-btn danger" onclick="clearAll()">🗑️ Wyczyść wszystko</button>
+</div>
+
+<!-- Object Controls Floating -->
+<div class="obj-controls" id="objControls">
+  <button class="obj-ctrl-btn" onclick="rotateSelected(-15)" title="Obróć lewo">↺</button>
+  <button class="obj-ctrl-btn" onclick="rotateSelected(15)" title="Obróć prawo">↻</button>
+  <button class="obj-ctrl-btn" onclick="scaleSelected(1.1)" title="Powiększ">⊕</button>
+  <button class="obj-ctrl-btn" onclick="scaleSelected(0.9)" title="Zmniejsz">⊖</button>
+  <button class="obj-ctrl-btn del" onclick="deleteSelected()" title="Usuń">✕</button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+<div class="flash" id="flash"></div>
+<div id="erasePreview"></div>
+<div class="erase-banner" id="eraseBanner">🪄 Narysuj prostokąt na meblu który chcesz ukryć</div>
+
+<script>
+// ===== STATE =====
+let currentMode = 'interior';
+let currentTool = 'place';
+let selectedItem = null;
+let selectedObject = null;
+let placedObjects = [];
+let erasedZones = [];      // {id, x, y, w, h, fillColor, label}
+let currentWallColor = null;
+let isDragging = false;
+let dragObj = null;
+let dragOffX = 0, dragOffY = 0;
+let cameraActive = false;
+
+// Erase drawing state
+let isDrawingErase = false;
+let eraseStart = null;
+let erasePreviewEl = document.getElementById('erasePreview');
+
+// ===== DATA =====
+const FURNITURE = [
+  { emoji: '🛋️', label: 'Sofa' },
+  { emoji: '🪑', label: 'Fotel' },
+  { emoji: '🛏️', label: 'Łóżko' },
+  { emoji: '🪴', label: 'Roślina' },
+  { emoji: '🖼️', label: 'Obraz' },
+  { emoji: '💡', label: 'Lampa' },
+  { emoji: '📺', label: 'TV' },
+  { emoji: '🪞', label: 'Lustro' },
+  { emoji: '🛁', label: 'Wanna' },
+  { emoji: '🚿', label: 'Prysznic' },
+  { emoji: '🍳', label: 'Kuchnia' },
+  { emoji: '🪟', label: 'Okno' },
+];
+
+const WALL_COLORS = [
+  '#f5f0e8','#e8ddd0','#d4c5b0',
+  '#b8d4c8','#8fb8a8','#6a9e8a',
+  '#c8d4e8','#9ab0cc','#7090b8',
+  '#e8c8c8','#d4a0a0','#b87878',
+  '#e8e0c8','#d4c890','#b8a850',
+  '#e0c8e8','#c8a0d4','#a870c0',
+  '#2a2520','#3d3530','#555050',
+  '#ffffff','#f0f0f0','#e0e0e0',
+];
+
+const PLANTS = [
+  { emoji: '🌹', label: 'Różana rabata' },
+  { emoji: '🌷', label: 'Tulipany' },
+  { emoji: '🌻', label: 'Słoneczniki' },
+  { emoji: '🌺', label: 'Kwiaty tropikalne' },
+  { emoji: '🌸', label: 'Wiśnie' },
+  { emoji: '🌿', label: 'Trawnik' },
+  { emoji: '🌳', label: 'Drzewo' },
+  { emoji: '🌲', label: 'Świerk' },
+  { emoji: '🎋', label: 'Bambus' },
+  { emoji: '🪻', label: 'Lawenda' },
+  { emoji: '🍀', label: 'Koniczyna' },
+  { emoji: '🌾', label: 'Trawy ozdobne' },
+];
+
+const ARCHI = [
+  { emoji: '⛲', label: 'Fontanna' },
+  { emoji: '🏡', label: 'Altana' },
+  { emoji: '🚪', label: 'Brama' },
+  { emoji: '🪨', label: 'Kamienie' },
+  { emoji: '🛤️', label: 'Ścieżka' },
+  { emoji: '🧱', label: 'Murki' },
+  { emoji: '🪵', label: 'Drewniany płot' },
+  { emoji: '⛺', label: 'Pergola' },
+  { emoji: '🏊', label: 'Oczko wodne' },
+];
+
+const DECO = [
+  { emoji: '🪔', label: 'Latarnia' },
+  { emoji: '🏮', label: 'Lampion' },
+  { emoji: '🪑', label: 'Ławka' },
+  { emoji: '🌡️', label: 'Termometr' },
+  { emoji: '🎍', label: 'Bambus deco' },
+  { emoji: '🪆', label: 'Figurka' },
+  { emoji: '🎑', label: 'Haiku deco' },
+  { emoji: '🫧', label: 'Wodospad' },
+];
+
+const GROUND_COLORS = [
+  '#4a7c3f','#6a9e5a','#8abf70',
+  '#8b7355','#6b5a3a','#a08060',
+  '#c8b878','#d4c890','#e0d8a0',
+  '#9090a0','#707080','#505060',
+];
+
+const TIPS = [
+  "💡 Kliknij na ścianę (narzędzie 🎨) aby zmienić kolor malowania.",
+  "💡 Przeciągnij elementy żeby zmienić ich pozycję w pomieszczeniu.",
+  "💡 Wybierz element i użyj ↺↻ aby go obracać.",
+  "💡 Uruchom kamerę aby zobaczyć AR w swoim prawdziwym pokoju!",
+  "💡 Użyj suwaka intensywności aby dostosować krycie farby.",
+  "💡 Tryb ogród: wstaw rabaty kwiatowe i małą architekturę.",
+  "💡 Narzędzie 🪄: narysuj prostokąt na prawdziwym meblu aby go 'ukryć' i zobaczyć jak wygląda pokój bez niego!",
+  "💡 Po ukryciu prawdziwego mebla, wstaw wirtualny w nowe miejsce aby zobaczyć nową aranżację.",
+];
+
+// ===== INIT =====
+function init() {
+  buildFurnitureGrid('furnitureGrid', FURNITURE);
+  buildFurnitureGrid('plantsGrid', PLANTS);
+  buildFurnitureGrid('archiGrid', ARCHI);
+  buildFurnitureGrid('decoGrid', DECO);
+  buildColorGrid('wallColors', WALL_COLORS, 'wall');
+  buildColorGrid('groundColors', GROUND_COLORS, 'ground');
+  setupCanvas();
+}
+
+function buildFurnitureGrid(gridId, items) {
+  const grid = document.getElementById(gridId);
+  items.forEach((item, i) => {
+    const el = document.createElement('div');
+    el.className = 'furniture-item';
+    el.innerHTML = `${item.emoji}<span>${item.label}</span>`;
+    el.onclick = () => selectFurniture(el, item);
+    grid.appendChild(el);
+  });
+}
+
+function buildColorGrid(gridId, colors, type) {
+  const grid = document.getElementById(gridId);
+  colors.forEach(color => {
+    const el = document.createElement('div');
+    el.className = 'color-swatch';
+    el.style.background = color;
+    el.onclick = () => {
+      grid.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+      el.classList.add('selected');
+      if (type === 'wall') applyWallColor(color);
+      else applyGroundColor(color);
+    };
+    grid.appendChild(el);
+  });
+}
+
+function selectFurniture(el, item) {
+  document.querySelectorAll('.furniture-item').forEach(f => f.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedItem = item;
+  setTool('place');
+  showToast(`Wybrano: ${item.emoji} ${item.label} — kliknij na scenę aby umieścić`);
+}
+
+// ===== CANVAS =====
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+function setupCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  render();
+
+  canvas.addEventListener('click', onCanvasClick);
+  canvas.addEventListener('mousedown', onMouseDown);
+  canvas.addEventListener('mousemove', onMouseMove);
+  canvas.addEventListener('mouseup', onMouseUp);
+  canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+  canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+  canvas.addEventListener('touchend', onTouchEnd);
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    render();
+  });
+}
+
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Draw erased zones first (behind virtual objects)
+  erasedZones.forEach(zone => drawErasedZone(zone));
+  placedObjects.forEach(obj => drawObject(obj));
+}
+
+function drawErasedZone(zone) {
+  ctx.save();
+  // Fill with wall color or a neutral plaster tone
+  ctx.fillStyle = zone.fillColor;
+  ctx.fillRect(zone.x, zone.y, zone.w, zone.h);
+  // Subtle inner border to show it's a masked area
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.strokeRect(zone.x + 2, zone.y + 2, zone.w - 4, zone.h - 4);
+  ctx.setLineDash([]);
+  // Label
+  ctx.font = '11px DM Sans, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('✦ ukryty mebel', zone.x + zone.w/2, zone.y + zone.h/2);
+  ctx.restore();
+}
+
+function drawObject(obj) {
+  ctx.save();
+  ctx.translate(obj.x, obj.y);
+  ctx.rotate(obj.rotation * Math.PI / 180);
+  ctx.scale(obj.scale, obj.scale);
+
+  // Shadow
+  ctx.shadowColor = 'rgba(0,0,0,0.4)';
+  ctx.shadowBlur = 20;
+  ctx.shadowOffsetY = 10;
+
+  // Emoji
+  ctx.font = `${obj.size}px serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(obj.emoji, 0, 0);
+
+  // Selection ring
+  if (obj === selectedObject) {
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(122,158,126,0.9)';
+    ctx.lineWidth = 2 / obj.scale;
+    ctx.setLineDash([6, 3]);
+    const r = (obj.size / 2) + 10;
+    ctx.strokeRect(-r, -r, r*2, r*2);
+    ctx.setLineDash([]);
+  }
+
+  ctx.restore();
+
+  // Label
+  if (!cameraActive) {
+    ctx.save();
+    ctx.font = '11px DM Sans, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.fillRect(obj.x - 30, obj.y + (obj.size/2)*obj.scale + 4, 60, 16);
+    ctx.fillStyle = 'rgba(30,25,20,0.8)';
+    ctx.fillText(obj.label, obj.x, obj.y + (obj.size/2)*obj.scale + 13);
+    ctx.restore();
+  }
+}
+
+// ===== INTERACTIONS =====
+function onCanvasClick(e) {
+  if (isDragging) return;
+  if (currentTool === 'erase') return; // handled by mousedown/up
+  const pos = getPos(e);
+  if (currentTool === 'place' && selectedItem) {
+    placeObject(pos.x, pos.y);
+  } else if (currentTool === 'delete') {
+    const obj = findObjectAt(pos.x, pos.y);
+    if (obj) {
+      placedObjects = placedObjects.filter(o => o !== obj);
+      if (selectedObject === obj) { selectedObject = null; hideObjControls(); }
+      render();
+      showToast('Element usunięty');
+    }
+  } else {
+    const obj = findObjectAt(pos.x, pos.y);
+    if (obj) {
+      selectedObject = obj;
+      showObjControls(pos.x, pos.y);
+    } else {
+      selectedObject = null;
+      hideObjControls();
+    }
+    render();
+  }
+}
+
+function onMouseDown(e) {
+  const pos = getPos(e);
+
+  if (currentTool === 'erase') {
+    isDrawingErase = true;
+    eraseStart = pos;
+    erasePreviewEl.style.display = 'block';
+    erasePreviewEl.style.left = pos.x + 'px';
+    erasePreviewEl.style.top = pos.y + 'px';
+    erasePreviewEl.style.width = '0px';
+    erasePreviewEl.style.height = '0px';
+    return;
+  }
+
+  const obj = findObjectAt(pos.x, pos.y);
+  if (obj && currentTool === 'move') {
+    isDragging = true;
+    dragObj = obj;
+    dragOffX = pos.x - obj.x;
+    dragOffY = pos.y - obj.y;
+    selectedObject = obj;
+    canvas.style.cursor = 'grabbing';
+  } else if (obj) {
+    isDragging = false;
+    dragObj = obj;
+    dragOffX = pos.x - obj.x;
+    dragOffY = pos.y - obj.y;
+    setTimeout(() => { if (!isDragging) dragObj = null; }, 100);
+  }
+}
+
+function onMouseMove(e) {
+  const pos = getPos(e);
+
+  if (isDrawingErase && eraseStart) {
+    const x = Math.min(pos.x, eraseStart.x);
+    const y = Math.min(pos.y, eraseStart.y);
+    const w = Math.abs(pos.x - eraseStart.x);
+    const h = Math.abs(pos.y - eraseStart.y);
+    erasePreviewEl.style.left = x + 'px';
+    erasePreviewEl.style.top = y + 'px';
+    erasePreviewEl.style.width = w + 'px';
+    erasePreviewEl.style.height = h + 'px';
+    return;
+  }
+
+  if (!dragObj) return;
+  isDragging = true;
+  dragObj.x = pos.x - dragOffX;
+  dragObj.y = pos.y - dragOffY;
+  selectedObject = dragObj;
+  showObjControls(pos.x, pos.y - 60);
+  render();
+}
+
+function onMouseUp(e) {
+  const pos = getPos(e);
+
+  if (isDrawingErase && eraseStart) {
+    isDrawingErase = false;
+    erasePreviewEl.style.display = 'none';
+    const x = Math.min(pos.x, eraseStart.x);
+    const y = Math.min(pos.y, eraseStart.y);
+    const w = Math.abs(pos.x - eraseStart.x);
+    const h = Math.abs(pos.y - eraseStart.y);
+    if (w > 20 && h > 20) {
+      commitEraseZone(x, y, w, h);
+    } else {
+      showToast('Narysuj większy prostokąt na meblu');
+    }
+    eraseStart = null;
+    return;
+  }
+
+  if (dragObj) {
+    dragObj = null;
+    canvas.style.cursor = 'crosshair';
+    setTimeout(() => { isDragging = false; }, 50);
+  }
+}
+
+function onTouchStart(e) {
+  e.preventDefault();
+  const t = e.touches[0];
+  onMouseDown({ clientX: t.clientX, clientY: t.clientY });
+}
+function onTouchMove(e) {
+  e.preventDefault();
+  const t = e.touches[0];
+  onMouseMove({ clientX: t.clientX, clientY: t.clientY });
+}
+function onTouchEnd(e) {
+  const t = e.changedTouches[0];
+  onMouseUp({ clientX: t.clientX, clientY: t.clientY });
+}
+
+function getPos(e) {
+  const r = canvas.getBoundingClientRect();
+  return { x: (e.clientX || 0) - r.left, y: (e.clientY || 0) - r.top };
+}
+
+function findObjectAt(x, y) {
+  for (let i = placedObjects.length - 1; i >= 0; i--) {
+    const obj = placedObjects[i];
+    const r = (obj.size / 2 + 20) * obj.scale;
+    if (Math.abs(x - obj.x) < r && Math.abs(y - obj.y) < r) return obj;
+  }
+  return null;
+}
+
+// ===== ERASE ZONES =====
+function commitEraseZone(x, y, w, h) {
+  // Pick fill color: wall color if set, else sample-ish neutral
+  const fill = currentWallColor || '#d4c8b0';
+  const id = Date.now();
+  const label = `Mebel #${erasedZones.length + 1}`;
+  erasedZones.push({ id, x, y, w, h, fillColor: fill, label });
+  render();
+  updateEraseList();
+  showToast(`🪄 ${label} ukryty! Teraz możesz wstawić wirtualny mebel na to miejsce.`);
+}
+
+function restoreEraseZone(id) {
+  erasedZones = erasedZones.filter(z => z.id !== id);
+  render();
+  updateEraseList();
+  showToast('Mebel przywrócony');
+}
+
+function updateEraseList() {
+  const list = document.getElementById('eraseZonesList');
+  const count = document.getElementById('eraseCount');
+  count.textContent = erasedZones.length > 0 ? `(${erasedZones.length})` : '';
+  if (erasedZones.length === 0) {
+    list.innerHTML = '<div style="padding:10px 14px;font-size:11px;color:rgba(253,250,246,0.35);">Użyj narzędzia 🪄 aby ukryć prawdziwe meble</div>';
+    return;
+  }
+  list.innerHTML = erasedZones.map(z => `
+    <div class="erase-zone-item">
+      <span>🪑 ${z.label}</span>
+      <button class="erase-zone-restore" onclick="restoreEraseZone(${z.id})">Przywróć</button>
+    </div>
+  `).join('');
+}
+
+// ===== PLACE OBJECT =====
+function placeObject(x, y) {
+  if (!selectedItem) { showToast('Najpierw wybierz element z panelu →'); return; }
+  const obj = {
+    id: Date.now(),
+    emoji: selectedItem.emoji,
+    label: selectedItem.label,
+    x, y,
+    size: 52,
+    rotation: 0,
+    scale: 1,
+  };
+  placedObjects.push(obj);
+  selectedObject = obj;
+  showObjControls(x, y - 60);
+  render();
+  showToast(`${obj.emoji} ${obj.label} dodany!`);
+}
+
+// ===== OBJECT CONTROLS =====
+function showObjControls(x, y) {
+  const ctrl = document.getElementById('objControls');
+  ctrl.classList.add('visible');
+  const cx = Math.min(Math.max(x - 80, 10), window.innerWidth - 180);
+  const cy = Math.max(y - 50, 80);
+  ctrl.style.left = cx + 'px';
+  ctrl.style.top = cy + 'px';
+}
+
+function hideObjControls() {
+  document.getElementById('objControls').classList.remove('visible');
+}
+
+function rotateSelected(deg) {
+  if (!selectedObject) return;
+  selectedObject.rotation = (selectedObject.rotation + deg) % 360;
+  render();
+}
+
+function scaleSelected(factor) {
+  if (!selectedObject) return;
+  selectedObject.scale = Math.max(0.3, Math.min(3, selectedObject.scale * factor));
+  render();
+}
+
+function deleteSelected() {
+  if (!selectedObject) return;
+  placedObjects = placedObjects.filter(o => o !== selectedObject);
+  selectedObject = null;
+  hideObjControls();
+  render();
+  showToast('Element usunięty');
+}
+
+// ===== WALL COLOR =====
+function applyWallColor(color) {
+  currentWallColor = color;
+  const overlay = document.getElementById('wallOverlay');
+  const opacity = document.getElementById('wallOpacity').value / 100;
+  overlay.style.background = color;
+  overlay.style.opacity = opacity;
+  // Also update simulated wall
+  document.getElementById('simWall').style.background = color;
+  showToast('Kolor ściany zmieniony');
+}
+
+function updateWallOpacity(val) {
+  document.getElementById('wallOpacityVal').textContent = val + '%';
+  const overlay = document.getElementById('wallOverlay');
+  if (currentWallColor) overlay.style.opacity = val / 100;
+}
+
+function applyGroundColor(color) {
+  showToast('Kolor podłoża zmieniony');
+}
+
+// ===== LIGHTING =====
+function updateBrightness(val) {
+  document.getElementById('brightnessVal').textContent = val + '%';
+  document.getElementById('cameraFeed').style.filter = `brightness(${val/100}) sepia(${document.getElementById('warmth').value > 0 ? document.getElementById('warmth').value * 0.5 : 0}%)`;
+}
+
+function updateWarmth(val) {
+  document.getElementById('warmthVal').textContent = val + '°';
+  const brightness = document.getElementById('brightness').value / 100;
+  const sepia = Math.max(0, val) * 0.8;
+  const hue = val < 0 ? val * 2 : 0;
+  document.getElementById('cameraFeed').style.filter = `brightness(${brightness}) sepia(${sepia}%) hue-rotate(${hue}deg)`;
+}
+
+// ===== MODE =====
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && mode === 'interior') || (i === 1 && mode === 'garden'));
+  });
+  document.getElementById('interiorPanel').style.display = mode === 'interior' ? '' : 'none';
+  document.getElementById('gardenPanel').style.display = mode === 'garden' ? '' : 'none';
+  selectedItem = null;
+  document.querySelectorAll('.furniture-item').forEach(f => f.classList.remove('selected'));
+  showToast(mode === 'interior' ? '🏠 Tryb projektowania wnętrz' : '🌿 Tryb projektowania ogrodu');
+}
+
+// ===== TOOL =====
+function setTool(tool) {
+  currentTool = tool;
+  ['toolPlace','toolMove','toolPaint','toolErase','toolDelete'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+  const map = { place: 'toolPlace', move: 'toolMove', paint: 'toolPaint', erase: 'toolErase', delete: 'toolDelete' };
+  if (map[tool]) document.getElementById(map[tool])?.classList.add('active');
+
+  const banner = document.getElementById('eraseBanner');
+  if (tool === 'erase') {
+    canvas.style.cursor = 'crosshair';
+    banner.classList.add('visible');
+    showToast('🪄 Narysuj prostokąt na prawdziwym meblu aby go ukryć');
+  } else {
+    banner.classList.remove('visible');
+    canvas.style.cursor = tool === 'move' ? 'grab' : tool === 'delete' ? 'not-allowed' : 'crosshair';
+  }
+}
+
+// ===== GARDEN TABS =====
+function showGardenTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+// ===== CAMERA =====
+async function startCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+    });
+    const video = document.getElementById('cameraFeed');
+    video.srcObject = stream;
+    video.style.display = 'block';
+    document.getElementById('cameraPlaceholder').style.display = 'none';
+    cameraActive = true;
+    document.getElementById('statusDot').classList.add('live');
+    document.getElementById('statusText').textContent = 'Kamera AR';
+    showToast('📷 Kamera aktywna! Możesz teraz projektować w AR');
+    render();
+  } catch (err) {
+    if (err.name === 'NotAllowedError') {
+      showToast('🚫 Brak dostępu do kamery — używam trybu symulacji');
+    } else {
+      showToast('📷 Kamera niedostępna — tryb symulacji aktywny');
+    }
+    console.log('Camera error:', err);
+  }
+}
+
+// ===== SCREENSHOT =====
+function takeScreenshot() {
+  const flash = document.getElementById('flash');
+  flash.classList.add('go');
+  setTimeout(() => flash.classList.remove('go'), 300);
+
+  const offscreen = document.createElement('canvas');
+  offscreen.width = window.innerWidth;
+  offscreen.height = window.innerHeight;
+  const octx = offscreen.getContext('2d');
+
+  if (cameraActive) {
+    try {
+      octx.drawImage(document.getElementById('cameraFeed'), 0, 0, offscreen.width, offscreen.height);
+    } catch(e) {}
+  } else {
+    octx.fillStyle = '#2a2520';
+    octx.fillRect(0, 0, offscreen.width, offscreen.height);
+  }
+
+  placedObjects.forEach(obj => {
+    octx.save();
+    octx.translate(obj.x, obj.y);
+    octx.rotate(obj.rotation * Math.PI / 180);
+    octx.scale(obj.scale, obj.scale);
+    octx.font = `${obj.size}px serif`;
+    octx.textAlign = 'center';
+    octx.textBaseline = 'middle';
+    octx.shadowColor = 'rgba(0,0,0,0.4)';
+    octx.shadowBlur = 20;
+    octx.fillText(obj.emoji, 0, 0);
+    octx.restore();
+  });
+
+  offscreen.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `designAR_${Date.now()}.png`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('📸 Zrzut zapisany!');
+  });
+}
+
+// ===== UTILS =====
+function clearAll() {
+  placedObjects = [];
+  erasedZones = [];
+  selectedObject = null;
+  hideObjControls();
+  render();
+  updateEraseList();
+  document.getElementById('wallOverlay').style.opacity = 0;
+  document.getElementById('simWall').style.background = 'linear-gradient(to bottom, #3d3525 0%, #4a3d28 100%)';
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+  currentWallColor = null;
+  showToast('Wyczyszczono projekt');
+}
+
+function showTip() {
+  showToast(TIPS[Math.floor(Math.random() * TIPS.length)]);
+}
+
+let toastTimer;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ===== START =====
+init();
+</script>
+</body>
+</html>
