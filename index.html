@@ -45,8 +45,8 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    z-index: 1;
-    cursor: crosshair;
+    z-index: 3;
+    touch-action: none;
   }
 
   /* === OVERLAY GRADIENT === */
@@ -64,13 +64,16 @@
     top: 0;
     left: 0;
     right: 0;
-    z-index: 10;
+    z-index: 20;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 16px 24px;
     background: linear-gradient(to bottom, rgba(30,25,20,0.85) 0%, transparent 100%);
+    pointer-events: none;
   }
+
+  .top-bar > * { pointer-events: auto; }
 
   .logo {
     font-family: 'Cormorant Garamond', serif;
@@ -144,7 +147,7 @@
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 10;
+    z-index: 20;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -333,14 +336,17 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 10;
+    z-index: 20;
     padding: 16px 24px;
     background: linear-gradient(to top, rgba(30,25,20,0.85) 0%, transparent 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
+    pointer-events: none;
   }
+
+  .bottom-bar > * { pointer-events: auto; }
 
   .action-btn {
     padding: 10px 22px;
@@ -1001,18 +1007,151 @@ function setupCanvas() {
   canvas.height = window.innerHeight;
   render();
 
-  canvas.addEventListener('click', onCanvasClick);
-  canvas.addEventListener('mousedown', onMouseDown);
-  canvas.addEventListener('mousemove', onMouseMove);
-  canvas.addEventListener('mouseup', onMouseUp);
-  canvas.addEventListener('touchstart', onTouchStart, { passive: false });
-  canvas.addEventListener('touchmove', onTouchMove, { passive: false });
-  canvas.addEventListener('touchend', onTouchEnd);
+  // Mouse events (desktop)
+  canvas.addEventListener('mousedown', onPointerDown);
+  canvas.addEventListener('mousemove', onPointerMove);
+  canvas.addEventListener('mouseup', onPointerUp);
+  canvas.addEventListener('click', onPointerTap);
+
+  // Touch events (mobile) - completely separate, no delegation
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const t = e.changedTouches[0];
+    onPointerDown({ clientX: t.clientX, clientY: t.clientY });
+  }, { passive: false });
+
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const t = e.changedTouches[0];
+    onPointerMove({ clientX: t.clientX, clientY: t.clientY });
+  }, { passive: false });
+
+  canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const t = e.changedTouches[0];
+    onPointerUp({ clientX: t.clientX, clientY: t.clientY });
+    // Also fire tap if didn't drag
+    if (!didDrag) {
+      onPointerTap({ clientX: t.clientX, clientY: t.clientY });
+    }
+  }, { passive: false });
+
   window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     render();
   });
+}
+
+let didDrag = false;
+let pointerDownPos = null;
+
+function onPointerDown(e) {
+  didDrag = false;
+  pointerDownPos = { x: e.clientX, y: e.clientY };
+  const pos = getPos(e);
+
+  if (currentTool === 'erase') {
+    isDrawingErase = true;
+    eraseStart = pos;
+    erasePreviewEl.style.display = 'block';
+    erasePreviewEl.style.left = pos.x + 'px';
+    erasePreviewEl.style.top = pos.y + 'px';
+    erasePreviewEl.style.width = '0px';
+    erasePreviewEl.style.height = '0px';
+    return;
+  }
+
+  const obj = findObjectAt(pos.x, pos.y);
+  if (obj) {
+    dragObj = obj;
+    dragOffX = pos.x - obj.x;
+    dragOffY = pos.y - obj.y;
+    selectedObject = obj;
+    render();
+  }
+}
+
+function onPointerMove(e) {
+  const pos = getPos(e);
+
+  if (isDrawingErase && eraseStart) {
+    didDrag = true;
+    const x = Math.min(pos.x, eraseStart.x);
+    const y = Math.min(pos.y, eraseStart.y);
+    const w = Math.abs(pos.x - eraseStart.x);
+    const h = Math.abs(pos.y - eraseStart.y);
+    erasePreviewEl.style.left = x + 'px';
+    erasePreviewEl.style.top = y + 'px';
+    erasePreviewEl.style.width = w + 'px';
+    erasePreviewEl.style.height = h + 'px';
+    return;
+  }
+
+  if (dragObj) {
+    // Check moved enough to count as drag
+    if (pointerDownPos && Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y) > 5) {
+      didDrag = true;
+    }
+    dragObj.x = pos.x - dragOffX;
+    dragObj.y = pos.y - dragOffY;
+    render();
+  }
+}
+
+function onPointerUp(e) {
+  const pos = getPos(e);
+
+  if (isDrawingErase && eraseStart) {
+    isDrawingErase = false;
+    erasePreviewEl.style.display = 'none';
+    const x = Math.min(pos.x, eraseStart.x);
+    const y = Math.min(pos.y, eraseStart.y);
+    const w = Math.abs(pos.x - eraseStart.x);
+    const h = Math.abs(pos.y - eraseStart.y);
+    if (w > 20 && h > 20) commitEraseZone(x, y, w, h);
+    else showToast('Narysuj większy prostokąt na meblu');
+    eraseStart = null;
+    dragObj = null;
+    return;
+  }
+
+  dragObj = null;
+}
+
+function onPointerTap(e) {
+  if (didDrag) return; // was a drag, not a tap
+  const pos = getPos(e);
+
+  if (currentTool === 'place' && selectedItem) {
+    placeObject(pos.x, pos.y);
+    return;
+  }
+
+  if (currentTool === 'delete') {
+    const obj = findObjectAt(pos.x, pos.y);
+    if (obj) {
+      placedObjects = placedObjects.filter(o => o !== obj);
+      if (selectedObject === obj) { selectedObject = null; hideObjControls(); }
+      render();
+      showToast('Element usunięty');
+    }
+    return;
+  }
+
+  // Select object
+  const obj = findObjectAt(pos.x, pos.y);
+  if (obj) {
+    selectedObject = obj;
+    showObjControls(pos.x, pos.y);
+  } else {
+    selectedObject = null;
+    hideObjControls();
+  }
+  render();
 }
 
 function render() {
@@ -1083,130 +1222,6 @@ function drawObject(obj) {
     ctx.fillText(obj.label, obj.x, obj.y + (obj.size/2)*obj.scale + 13);
     ctx.restore();
   }
-}
-
-// ===== INTERACTIONS =====
-function onCanvasClick(e) {
-  if (isDragging) return;
-  if (currentTool === 'erase') return; // handled by mousedown/up
-  const pos = getPos(e);
-  if (currentTool === 'place' && selectedItem) {
-    placeObject(pos.x, pos.y);
-  } else if (currentTool === 'delete') {
-    const obj = findObjectAt(pos.x, pos.y);
-    if (obj) {
-      placedObjects = placedObjects.filter(o => o !== obj);
-      if (selectedObject === obj) { selectedObject = null; hideObjControls(); }
-      render();
-      showToast('Element usunięty');
-    }
-  } else {
-    const obj = findObjectAt(pos.x, pos.y);
-    if (obj) {
-      selectedObject = obj;
-      showObjControls(pos.x, pos.y);
-    } else {
-      selectedObject = null;
-      hideObjControls();
-    }
-    render();
-  }
-}
-
-function onMouseDown(e) {
-  const pos = getPos(e);
-
-  if (currentTool === 'erase') {
-    isDrawingErase = true;
-    eraseStart = pos;
-    erasePreviewEl.style.display = 'block';
-    erasePreviewEl.style.left = pos.x + 'px';
-    erasePreviewEl.style.top = pos.y + 'px';
-    erasePreviewEl.style.width = '0px';
-    erasePreviewEl.style.height = '0px';
-    return;
-  }
-
-  const obj = findObjectAt(pos.x, pos.y);
-  if (obj && currentTool === 'move') {
-    isDragging = true;
-    dragObj = obj;
-    dragOffX = pos.x - obj.x;
-    dragOffY = pos.y - obj.y;
-    selectedObject = obj;
-    canvas.style.cursor = 'grabbing';
-  } else if (obj) {
-    isDragging = false;
-    dragObj = obj;
-    dragOffX = pos.x - obj.x;
-    dragOffY = pos.y - obj.y;
-    setTimeout(() => { if (!isDragging) dragObj = null; }, 100);
-  }
-}
-
-function onMouseMove(e) {
-  const pos = getPos(e);
-
-  if (isDrawingErase && eraseStart) {
-    const x = Math.min(pos.x, eraseStart.x);
-    const y = Math.min(pos.y, eraseStart.y);
-    const w = Math.abs(pos.x - eraseStart.x);
-    const h = Math.abs(pos.y - eraseStart.y);
-    erasePreviewEl.style.left = x + 'px';
-    erasePreviewEl.style.top = y + 'px';
-    erasePreviewEl.style.width = w + 'px';
-    erasePreviewEl.style.height = h + 'px';
-    return;
-  }
-
-  if (!dragObj) return;
-  isDragging = true;
-  dragObj.x = pos.x - dragOffX;
-  dragObj.y = pos.y - dragOffY;
-  selectedObject = dragObj;
-  showObjControls(pos.x, pos.y - 60);
-  render();
-}
-
-function onMouseUp(e) {
-  const pos = getPos(e);
-
-  if (isDrawingErase && eraseStart) {
-    isDrawingErase = false;
-    erasePreviewEl.style.display = 'none';
-    const x = Math.min(pos.x, eraseStart.x);
-    const y = Math.min(pos.y, eraseStart.y);
-    const w = Math.abs(pos.x - eraseStart.x);
-    const h = Math.abs(pos.y - eraseStart.y);
-    if (w > 20 && h > 20) {
-      commitEraseZone(x, y, w, h);
-    } else {
-      showToast('Narysuj większy prostokąt na meblu');
-    }
-    eraseStart = null;
-    return;
-  }
-
-  if (dragObj) {
-    dragObj = null;
-    canvas.style.cursor = 'crosshair';
-    setTimeout(() => { isDragging = false; }, 50);
-  }
-}
-
-function onTouchStart(e) {
-  e.preventDefault();
-  const t = e.touches[0];
-  onMouseDown({ clientX: t.clientX, clientY: t.clientY });
-}
-function onTouchMove(e) {
-  e.preventDefault();
-  const t = e.touches[0];
-  onMouseMove({ clientX: t.clientX, clientY: t.clientY });
-}
-function onTouchEnd(e) {
-  const t = e.changedTouches[0];
-  onMouseUp({ clientX: t.clientX, clientY: t.clientY });
 }
 
 function getPos(e) {
