@@ -3,525 +3,275 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Praca dla Marka — Dolny Śląsk</title>
+<title>Praca — Lwówek Śląski</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
 
 :root {
-  --ink:    #0d1117;
-  --paper:  #f5f2eb;
-  --cream:  #ede9e0;
-  --rust:   #c0440a;
-  --rust2:  #e05c1a;
-  --steel:  #2d4a6e;
-  --steel2: #3d6494;
-  --muted:  #7a7060;
-  --line:   #d8d2c5;
-  --card:   #faf8f4;
-  --green:  #2a7a4b;
-  --radius: 10px;
+  --bg: #f5f2eb;
+  --card: #fff;
+  --ink: #0d1117;
+  --muted: #6b6355;
+  --line: #ddd8ce;
+  --rust: #c0440a;
+  --rust2: #e05c1a;
+  --green: #1e6e3e;
+  --steel: #2d4a6e;
+  --r: 10px;
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--paper);
-  color: var(--ink);
-  min-height: 100vh;
-}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
 
-/* ── HEADER ─────────────────────────────── */
-.hero {
-  background: var(--ink);
-  color: var(--paper);
-  padding: 28px 20px 24px;
-  position: relative;
-  overflow: hidden;
-}
+.hero { background: var(--ink); color: #f5f2eb; padding: 24px 18px 20px; }
+.hero-eye { font-size: 0.68rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--rust2); margin-bottom: 6px; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(1.4rem, 6vw, 2rem); font-weight: 800; letter-spacing: -.02em; line-height: 1.1; margin-bottom: 8px; }
+.hero h1 em { font-style: normal; color: var(--rust2); }
+.hero p { font-size: .82rem; color: #999; line-height: 1.5; }
 
-.hero::after {
-  content: '';
-  position: absolute;
-  right: -30px; top: -30px;
-  width: 180px; height: 180px;
-  border-radius: 50%;
-  background: var(--rust);
-  opacity: 0.15;
-  pointer-events: none;
-}
+.chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 18px; background: #161b24; border-top: 1px solid #222; }
+.chip { font-size: .7rem; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+.cr { background: rgba(192,68,10,.25); color: #e87040; }
+.cs { background: rgba(45,74,110,.4); color: #7eb3e8; }
+.cg { background: rgba(30,110,62,.3); color: #5ec98a; }
 
-.hero-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--rust2);
-  margin-bottom: 8px;
-}
+main { padding: 18px 16px 60px; max-width: 680px; margin: 0 auto; }
 
-.hero h1 {
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(1.5rem, 7vw, 2.1rem);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  margin-bottom: 10px;
-}
-
-.hero h1 em {
-  font-style: normal;
-  color: var(--rust2);
-}
-
-.hero-sub {
-  font-size: 0.85rem;
-  color: #a8a098;
-  line-height: 1.5;
-}
-
-/* ── PROFIL CHIPS ────────────────────────── */
-.chips-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  padding: 14px 20px;
-  background: var(--ink);
-  border-top: 1px solid #2a2a2a;
-}
-
-.chip {
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 20px;
-  letter-spacing: 0.03em;
-}
-
-.chip-rust  { background: rgba(192,68,10,0.25); color: var(--rust2); }
-.chip-steel { background: rgba(45,74,110,0.4);  color: #7eb3e8; }
-.chip-green { background: rgba(42,122,75,0.25); color: #5ec98a; }
-
-/* ── MAIN ────────────────────────────────── */
-main { padding: 20px 16px 60px; max-width: 700px; margin: 0 auto; }
-
-/* ── API KEY ─────────────────────────────── */
-.api-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
-  align-items: center;
-}
-
+.api-row { display: flex; gap: 8px; margin-bottom: 16px; }
 .api-row input {
-  flex: 1;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.88rem;
-  padding: 10px 13px;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--card);
-  color: var(--ink);
-  outline: none;
-  transition: border-color 0.2s;
+  flex: 1; font-family: 'DM Sans', sans-serif; font-size: .88rem;
+  padding: 10px 13px; border: 1.5px solid var(--line); border-radius: var(--r);
+  background: var(--card); color: var(--ink); outline: none; transition: border-color .2s;
 }
-
-.api-row input:focus { border-color: var(--steel2); }
-
+.api-row input:focus { border-color: var(--steel); }
 .btn-sm {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 10px 13px;
-  border-radius: var(--radius);
-  border: 1.5px solid var(--line);
-  background: var(--card);
-  color: var(--muted);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif; font-size: .8rem; font-weight: 600;
+  padding: 10px 12px; border-radius: var(--r); border: 1.5px solid var(--line);
+  background: var(--card); color: var(--muted); cursor: pointer; white-space: nowrap;
+  transition: all .2s;
 }
-.btn-sm:hover { border-color: var(--steel2); color: var(--steel); }
-
-/* ── SEARCH BUTTON ───────────────────────── */
-.search-wrap { margin-bottom: 24px; }
+.btn-sm:hover { border-color: var(--steel); color: var(--steel); }
 
 .btn-search {
-  width: 100%;
-  font-family: 'Syne', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  padding: 16px;
-  border: none;
-  border-radius: var(--radius);
-  background: var(--rust);
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-search:hover  { background: var(--rust2); }
-.btn-search:active { transform: scale(0.99); }
-.btn-search:disabled { background: #bbb; cursor: not-allowed; }
-
-/* ── STATUS ──────────────────────────────── */
-.status {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  font-size: 0.83rem;
-  color: var(--muted);
-  margin-bottom: 16px;
-  min-height: 24px;
-}
-
-.spinner {
-  width: 14px; height: 14px;
-  border: 2px solid var(--line);
-  border-top-color: var(--rust);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  flex-shrink: 0;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── ERROR ───────────────────────────────── */
-.error-box {
-  background: #fff0ec;
-  border: 1.5px solid #f5c2ad;
-  border-radius: var(--radius);
-  color: #9b3015;
-  font-size: 0.84rem;
-  padding: 12px 14px;
-  margin-bottom: 16px;
-}
-
-/* ── SUMMARY CARD ────────────────────────── */
-.summary-card {
-  background: var(--steel);
-  color: #dce8f5;
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  font-size: 0.86rem;
-  line-height: 1.6;
+  width: 100%; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800;
+  letter-spacing: .02em; padding: 15px; border: none; border-radius: var(--r);
+  background: var(--rust); color: #fff; cursor: pointer; transition: background .2s, transform .1s;
   margin-bottom: 20px;
 }
+.btn-search:hover { background: var(--rust2); }
+.btn-search:active { transform: scale(.99); }
+.btn-search:disabled { background: #aaa; cursor: not-allowed; }
 
-.summary-card strong { color: #fff; }
+.status { display: flex; align-items: center; gap: 9px; font-size: .83rem; color: var(--muted); margin-bottom: 14px; min-height: 22px; }
+.spinner { width: 13px; height: 13px; border: 2px solid var(--line); border-top-color: var(--rust); border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── SECTION HEADER ──────────────────────── */
-.section-hd {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
+.error-box { background: #fff0ec; border: 1.5px solid #f5c2ad; border-radius: var(--r); color: #9b3015; font-size: .84rem; padding: 11px 14px; margin-bottom: 14px; }
+
+/* Nagłówek wyników */
+.results-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--ink);
 }
+.results-hd h2 { font-family: 'Syne', sans-serif; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+.badge { background: var(--rust); color: #fff; font-size: .7rem; font-weight: 700; padding: 2px 9px; border-radius: 20px; }
 
-.section-hd h2 {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--muted);
-}
-
-.count-badge {
-  font-size: 0.72rem;
-  font-weight: 700;
-  background: var(--rust);
-  color: #fff;
-  padding: 2px 9px;
-  border-radius: 20px;
-}
-
-/* ── OFFER CARD ──────────────────────────── */
+/* Karta oferty — PROSTA */
 .offer {
   background: var(--card);
   border: 1.5px solid var(--line);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 12px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  position: relative;
-}
-
-.offer:hover {
-  border-color: var(--rust);
-  box-shadow: 0 2px 12px rgba(192,68,10,0.08);
-}
-
-.offer-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 5px;
-}
-
-.offer-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.97rem;
-  font-weight: 700;
-  color: var(--ink);
-  line-height: 1.25;
-  flex: 1;
-}
-
-.source-badge {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 4px;
-  background: var(--cream);
-  color: var(--muted);
-  flex-shrink: 0;
-  border: 1px solid var(--line);
-}
-
-.offer-company {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--steel);
-  margin-bottom: 8px;
-}
-
-.offer-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 14px;
-  font-size: 0.78rem;
-  color: var(--muted);
+  border-radius: var(--r);
+  padding: 15px 16px;
   margin-bottom: 10px;
+  transition: border-color .2s, box-shadow .2s;
 }
+.offer:hover { border-color: var(--rust); box-shadow: 0 2px 10px rgba(192,68,10,.08); }
 
-.meta-item { display: flex; align-items: center; gap: 4px; }
+.offer-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 4px; }
+.offer-title { font-family: 'Syne', sans-serif; font-size: .95rem; font-weight: 700; color: var(--ink); line-height: 1.2; flex: 1; }
+.src { font-size: .65rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 3px 7px; border-radius: 4px; background: #f0ede6; color: var(--muted); border: 1px solid var(--line); flex-shrink: 0; }
 
-.salary { color: var(--green); font-weight: 700; }
-.car-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--rust);
-  background: rgba(192,68,10,0.08);
-  border: 1px solid rgba(192,68,10,0.2);
-  padding: 2px 8px;
-  border-radius: 4px;
-}
+.offer-company { font-size: .85rem; font-weight: 600; color: var(--steel); margin-bottom: 7px; }
 
-.offer-desc {
-  font-size: 0.82rem;
-  color: var(--muted);
-  line-height: 1.55;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--line);
-}
+.pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.pill { font-size: .72rem; font-weight: 600; padding: 3px 9px; border-radius: 5px; }
+.p-loc  { background: #eef3fa; color: var(--steel); }
+.p-car  { background: #fef0e8; color: var(--rust); border: 1px solid #f5c9b0; }
+.p-pay  { background: #edf7f1; color: var(--green); }
+.p-date { background: #f5f2eb; color: var(--muted); border: 1px solid var(--line); }
+.p-del  { background: #f5f2eb; color: var(--muted); border: 1px solid var(--line); }
+.p-train{ background: #eef3fa; color: var(--steel); }
 
-.offer-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.offer-tags { display: flex; flex-wrap: wrap; gap: 5px; }
-.tag {
-  font-size: 0.7rem;
-  padding: 2px 8px;
-  border-radius: 4px;
-  background: var(--cream);
-  color: var(--muted);
-  border: 1px solid var(--line);
-}
-
+/* LINK — główny przycisk */
 .offer-link {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--rust);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition: opacity 0.15s;
-  flex-shrink: 0;
-}
-.offer-link:hover { opacity: 0.7; }
-
-/* ── TIP ─────────────────────────────────── */
-.tip-card {
-  margin-top: 20px;
-  border-left: 3px solid var(--rust);
-  padding: 12px 14px;
-  background: var(--cream);
-  border-radius: 0 var(--radius) var(--radius) 0;
-  font-size: 0.83rem;
-  color: var(--muted);
-  line-height: 1.55;
-}
-
-.tip-card strong { color: var(--ink); }
-
-/* ── EMPTY ───────────────────────────────── */
-.empty {
+  display: block;
   text-align: center;
-  padding: 48px 20px;
+  background: var(--ink);
+  color: #f5f2eb;
+  font-family: 'Syne', sans-serif;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  padding: 10px;
+  border-radius: 7px;
+  text-decoration: none;
+  transition: background .15s;
+  margin-top: 4px;
+}
+.offer-link:hover { background: var(--rust); }
+.offer-link-missing {
+  display: block;
+  text-align: center;
+  background: #f0ede6;
   color: var(--muted);
-  font-size: 0.88rem;
-  line-height: 1.6;
+  font-size: .78rem;
+  padding: 9px;
+  border-radius: 7px;
+  margin-top: 4px;
+  border: 1px dashed var(--line);
 }
 
-/* ── DIVIDER ─────────────────────────────── */
-hr { border: none; border-top: 1px solid var(--line); margin: 0 0 20px; }
+.offer-why { font-size: .78rem; color: var(--rust); font-weight: 600; margin-bottom: 8px; }
+
+/* Podsumowanie */
+.summary { background: var(--steel); color: #dce8f5; border-radius: var(--r); padding: 14px 16px; font-size: .84rem; line-height: 1.6; margin-bottom: 18px; }
+.tip { border-left: 3px solid var(--rust); padding: 11px 13px; background: #fef6f2; border-radius: 0 var(--r) var(--r) 0; font-size: .82rem; color: var(--muted); line-height: 1.55; margin-top: 16px; }
+.tip strong { color: var(--ink); }
+
+.no-results { text-align: center; padding: 40px 20px; color: var(--muted); font-size: .88rem; line-height: 1.6; }
 </style>
 </head>
 <body>
 
 <header>
   <div class="hero">
-    <div class="hero-label">Dolny Śląsk · okolice Lwówka Śląskiego</div>
-    <h1>Praca<br>z <em>autem służbowym</em></h1>
-    <p class="hero-sub">Serwisant · Instalator · Technik terenowy<br>Firmy szukające pracowników w Twoim regionie</p>
+    <div class="hero-eye">Dolny Śląsk · Lwówek Śląski i okolice</div>
+    <h1>Praca z <em>autem służbowym</em></h1>
+    <p>Serwisant · Instalator · Technik terenowy<br>Tylko świeże oferty · Tylko z autem · Bez wymaganego doświadczenia</p>
   </div>
-  <div class="chips-bar">
-    <span class="chip chip-rust">🚗 Auto służbowe</span>
-    <span class="chip chip-rust">📍 Do 50 km od bazy</span>
-    <span class="chip chip-steel">🔧 Bez wymaganego doświadczenia</span>
-    <span class="chip chip-steel">🏠 Brak wyjazdów zagranicznych</span>
-    <span class="chip chip-green">🪪 Kat. B · C · D</span>
-    <span class="chip chip-green">Dolny Śląsk</span>
+  <div class="chips">
+    <span class="chip cr">🚗 Auto służbowe</span>
+    <span class="chip cr">📍 Dolny Śląsk</span>
+    <span class="chip cs">🔧 Bez doświadczenia</span>
+    <span class="chip cs">🏠 Brak wyjazdów za granicę</span>
+    <span class="chip cg">🪪 Kat. B · C · D</span>
+    <span class="chip cg">📅 Ostatnie 30 dni</span>
   </div>
 </header>
 
 <main>
-
   <div class="api-row">
     <input type="password" id="apiKey" placeholder="Klucz API Anthropic (sk-ant-…)" />
     <button class="btn-sm" onclick="toggleKey()">Pokaż</button>
   </div>
 
-  <div class="search-wrap">
-    <button class="btn-search" id="searchBtn" onclick="doSearch()">
-      🔍 Szukaj ofert teraz
-    </button>
-  </div>
+  <button class="btn-search" id="searchBtn" onclick="doSearch()">🔍 Szukaj świeżych ofert</button>
 
   <div class="status" id="statusBar"></div>
   <div id="errorBox"></div>
   <div id="results"></div>
-
 </main>
 
 <script>
 const $ = id => document.getElementById(id);
 
-// Klucz API — zapamiętaj
+try { $('apiKey').value = localStorage.getItem('ant_key') || ''; } catch(e){}
 function toggleKey() {
   const k = $('apiKey');
   k.type = k.type === 'password' ? 'text' : 'password';
 }
-try { $('apiKey').value = localStorage.getItem('ant_key') || ''; } catch(e){}
 $('apiKey').addEventListener('change', () => {
   try { localStorage.setItem('ant_key', $('apiKey').value.trim()); } catch(e){}
 });
 
 function setStatus(msg, spin = false) {
-  $('statusBar').innerHTML = msg
-    ? (spin ? `<div class="spinner"></div>${msg}` : msg)
-    : '';
+  $('statusBar').innerHTML = msg ? (spin ? `<div class="spinner"></div>${msg}` : msg) : '';
 }
 function showError(msg) {
-  $('errorBox').innerHTML = msg
-    ? `<div class="error-box">⚠️ ${msg}</div>` : '';
+  $('errorBox').innerHTML = msg ? `<div class="error-box">⚠️ ${msg}</div>` : '';
 }
 
-// ── Prompt skrojony pod Marka ─────────────────────────────────────────────
-const SYSTEM_PROMPT = `Jesteś specjalistycznym asystentem do wyszukiwania pracy dla Marka — mieszkańca Lwówka Śląskiego (Dolny Śląsk, Polska).
+const PROMPT = `Jesteś asystentem do wyszukiwania pracy dla Marka z Lwówka Śląskiego (Dolny Śląsk).
 
-PROFIL UŻYTKOWNIKA:
-- Mieszka w Lwówku Śląskim, powiat lwówecki, woj. dolnośląskie
-- Prawo jazdy: kat. B, C i D (duże doświadczenie w prowadzeniu pojazdów)
-- Brak doświadczenia technicznego, ale jest praktyczny i chętny do nauki
-- Nie może pracować fizycznie wyczerpująco
-- NIE chce wyjazdów zagranicznych ani tygodniowych delegacji w trasie
-- Sporadyczne jednodniowe delegacje krajowe są OK
-- Baza/siedziba firmy: do 50 km od Lwówka Śląskiego (np. Jelenia Góra, Złotoryja, Bolesławiec, Zgorzelec, Gryfów Śląski, Lubań)
-- Alternatywnie: firmy z innych miast (np. Wrocław, Legnica), które obsługują region Dolnego Śląska i dają auto służbowe do dojazdów z domu
+PROFIL:
+- Mieszka w Lwówku Śląskim (pow. lwówecki, woj. dolnośląskie)
+- Prawo jazdy kat. B, C i D — duże doświadczenie w prowadzeniu pojazdów
+- Brak doświadczenia technicznego, ale praktyczny i chętny do nauki
+- Nie chce wyjazdów zagranicznych ani tygodniowych delegacji
+- Sporadyczne jednodniowe delegacje krajowe — OK
+- Może dojeżdżać do bazy max 50 km od Lwówka (Jelenia Góra, Złotoryja, Bolesławiec, Lubań, Gryfów, Zgorzelec)
+- Akceptuje też firmy z innych miast (Wrocław, Legnica itp.) jeśli dają auto służbowe DO DOMU i teren pracy to Dolny Śląsk
 
-POSZUKIWANE STANOWISKA (priorytetowo):
-1. Serwisant / technik terenowy (urządzenia, maszyny, systemy — np. automaty vendingowe, systemy alarmowe, dźwigi, klimatyzacje, kotły, pompy ciepła, fotowoltaika, kasy fiskalne, bankomaty)
-2. Instalator (alarmy, CCTV, klimatyzacja, fotowoltaika, sieci, domofony)
-3. Technik serwisu z obsługą klienta
-4. Każda inna rola z autem służbowym i pracą w terenie na Dolnym Śląsku
+STANOWISKA (priorytet):
+- Serwisant / technik terenowy (automaty vendingowe, alarmy, windy, kotły, pompy ciepła, klimatyzacje, fotowoltaika, kasy fiskalne, bankomaty, UPS-y, gaśnice, wagi, drukarki)
+- Instalator (alarmy, CCTV, domofony, klimatyzacja, fotowoltaika, sieci)
+- Każda rola terenowa z autem służbowym na Dolnym Śląsku
 
-WYMAGANIA BEZWZGLĘDNE w każdej ofercie:
-- Samochód służbowy (auto do dojazdów do klientów lub do dyspozycji)
-- Brak wymaganego doświadczenia technicznego (lub firma szkoli od podstaw)
-- Praca na Dolnym Śląsku / w regionie Lwówka Śląskiego
-- Brak stałych wyjazdów zagranicznych
+TWARDE WYMAGANIA — oferta MUSI spełniać WSZYSTKIE:
+1. Auto służbowe lub auto do dyspozycji pracownika
+2. Praca w terenie na Dolnym Śląsku lub baza do 50 km od Lwówka
+3. NIE wymaga wcześniejszego doświadczenia technicznego (lub firma szkoli)
+4. Brak stałych wyjazdów zagranicznych
+5. Ogłoszenie z ostatnich 30 dni — sprawdź datę publikacji!
 
-Przeszukaj polskie serwisy ogłoszeniowe: Pracuj.pl, OLX Praca, Indeed Polska, LinkedIn, Praca.pl, GoWork.pl, Aplikuj.pl, Jooble.
+ODRZUĆ oferty które:
+- Wymagają doświadczenia (np. "min. 2 lata w serwisie")
+- Mają bazę tylko we Wrocławiu/Legnicy bez auta służbowego do domu
+- Dotyczą stałej pracy za granicą lub tygodniowych tras
+- Są nieaktualne (starsze niż 30 dni)
+
+Przeszukaj DOKŁADNIE te serwisy (wyszukaj frazy po polsku):
+- pracuj.pl — "serwisant auto służbowe dolny śląsk", "instalator bez doświadczenia jelenia góra"
+- olx.pl/praca — "technik terenowy dolny śląsk auto"
+- indeed.pl — "serwisant dolnośląskie", "instalator jelenia góra auto służbowe"
+- linkedin.com/jobs — "field technician Lower Silesia", "serwisant Jelenia Góra"
+- praca.pl — "serwisant auto służbowe"
+- jooble.org/pl — "technik serwisu dolnośląskie"
 
 Odpowiedz WYŁĄCZNIE poprawnym JSON, zero tekstu przed ani po:
 
 {
-  "summary": "2-3 zdania o sytuacji na rynku dla tego profilu w regionie",
+  "summary": "1-2 zdania o tym co znalazłeś i dlaczego oferty pasują",
   "oferty": [
     {
-      "tytul": "dokładna nazwa stanowiska z ogłoszenia",
+      "tytul": "dokładna nazwa stanowiska",
       "firma": "nazwa firmy",
-      "lokalizacja": "miasto, województwo",
-      "baza": "gdzie jest siedziba / skąd wychodzi trasa",
-      "serwis": "nazwa portalu z ogłoszeniem",
-      "url": "link do ogłoszenia lub pusty string",
-      "wynagrodzenie": "widełki lub pusty string",
-      "typ_umowy": "UoP / B2B / UZ / inny",
-      "auto_sluzbowe": true,
-      "delegacje": "opis charakteru delegacji (np. brak, sporadyczne krajowe, itp.)",
-      "szkolenie": "czy firma szkoli — tak/nie/brak info",
-      "opis": "2-3 zdania o obowiązkach i czego szukają",
-      "dlaczego_pasuje": "1 zdanie dlaczego ta oferta pasuje dla Marka",
-      "tagi": ["tag1", "tag2"],
-      "data": "kiedy dodano np. 2 dni temu lub pusty string"
+      "lokalizacja": "miasto gdzie jest baza lub teren pracy",
+      "serwis": "nazwa portalu",
+      "url": "BEZPOŚREDNI link do ogłoszenia — OBOWIĄZKOWY, nie strona główna portalu",
+      "wynagrodzenie": "widełki lub pusty string jeśli brak",
+      "delegacje": "brak / sporadyczne krajowe / inne",
+      "szkolenie": "tak — firma szkoli / nie info / nie",
+      "data_ogloszenia": "np. '5 dni temu' lub konkretna data",
+      "dlaczego_pasuje": "1 zdanie — konkretny powód dla Marka"
     }
   ],
-  "wskazowka": "1 konkretna praktyczna rada dla Marka jak zwiększyć szansę na tę pracę",
-  "alternatywy": "jeśli mało wyników — jakich słów kluczowych szukać samodzielnie"
+  "wskazowka": "1 konkretna rada jak Marek może zwiększyć szansę"
 }
 
-Zwróć 3-10 ofert. Jeśli nie ma dokładnych trafień dla Lwówka, szukaj firm z Dolnego Śląska dających auto służbowe pracownikom terenowym.`;
+WAŻNE co do URL: podaj PRAWDZIWY, działający link do konkretnego ogłoszenia. Jeśli nie masz pewności co do linka — wpisz pusty string, nie wymyślaj adresów.
+
+Zwróć 3-8 ofert które NAPRAWDĘ pasują. Lepiej 3 dobre niż 8 słabych.`;
 
 async function doSearch() {
   const apiKey = $('apiKey').value.trim();
   if (!apiKey) { showError('Wklej klucz API Anthropic.'); return; }
-
   try { localStorage.setItem('ant_key', apiKey); } catch(e){}
 
   showError('');
   $('results').innerHTML = '';
   $('searchBtn').disabled = true;
 
-  const steps = [
-    'Szukam ofert serwisanta i instalatora…',
-    'Przeszukuję Pracuj.pl, OLX, Indeed…',
-    'Sprawdzam wymagania i auta służbowe…',
-    'Filtruję pod Twój profil…',
+  const msgs = [
+    'Szukam świeżych ogłoszeń na Pracuj.pl…',
+    'Sprawdzam OLX i Indeed…',
+    'Weryfikuję wymagania i auto służbowe…',
+    'Odrzucam nieaktualne i niedopasowane…',
     'Prawie gotowe…'
   ];
-  let si = 0;
-  setStatus(steps[0], true);
-  const iv = setInterval(() => {
-    si = (si + 1) % steps.length;
-    setStatus(steps[si], true);
-  }, 3500);
+  let mi = 0;
+  setStatus(msgs[0], true);
+  const iv = setInterval(() => { mi = (mi+1) % msgs.length; setStatus(msgs[mi], true); }, 4000);
 
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
@@ -535,11 +285,10 @@ async function doSearch() {
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 4000,
-        system: SYSTEM_PROMPT,
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         messages: [{
           role: 'user',
-          content: 'Znajdź aktualne oferty pracy pasujące do mojego profilu. Dzisiejsza data: ' + new Date().toLocaleDateString('pl-PL') + '. Szukaj najświeższych ogłoszeń.'
+          content: PROMPT + '\n\nDzisiejsza data: ' + new Date().toLocaleDateString('pl-PL', {day:'numeric',month:'long',year:'numeric'}) + '. Szukaj tylko ogłoszeń z ostatnich 30 dni.'
         }]
       })
     });
@@ -552,10 +301,7 @@ async function doSearch() {
     }
 
     const data = await resp.json();
-    const rawText = data.content
-      .filter(b => b.type === 'text')
-      .map(b => b.text)
-      .join('\n');
+    const rawText = data.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
 
     setStatus('');
 
@@ -566,11 +312,8 @@ async function doSearch() {
       if (m) parsed = JSON.parse(m[0]);
     } catch(e) {}
 
-    if (parsed && parsed.oferty) {
-      render(parsed);
-    } else {
-      $('results').innerHTML = `<div class="summary-card" style="white-space:pre-wrap">${esc(rawText)}</div>`;
-    }
+    if (parsed && parsed.oferty) render(parsed);
+    else $('results').innerHTML = `<div class="summary">${esc(rawText)}</div>`;
 
   } catch(err) {
     clearInterval(iv);
@@ -585,82 +328,63 @@ function render(d) {
   const wrap = $('results');
   wrap.innerHTML = '';
 
-  // Podsumowanie
   if (d.summary) {
     const s = document.createElement('div');
-    s.className = 'summary-card';
-    s.innerHTML = d.summary;
+    s.className = 'summary';
+    s.textContent = d.summary;
     wrap.appendChild(s);
   }
 
-  // Nagłówek sekcji
   const hd = document.createElement('div');
-  hd.className = 'section-hd';
-  hd.innerHTML = `<h2>Znalezione oferty</h2><span class="count-badge">${d.oferty.length}</span>`;
+  hd.className = 'results-hd';
+  hd.innerHTML = `<h2>Znalezione oferty</h2><span class="badge">${d.oferty.length}</span>`;
   wrap.appendChild(hd);
 
-  // Karty ofert
+  if (!d.oferty.length) {
+    wrap.innerHTML += `<div class="no-results">Nie znaleziono pasujących ofert.<br>Spróbuj za kilka dni — ogłoszenia pojawiają się codziennie.</div>`;
+    return;
+  }
+
   d.oferty.forEach(o => {
     const card = document.createElement('div');
     card.className = 'offer';
 
-    const tagiHTML = (o.tagi || []).map(t => `<span class="tag">${esc(t)}</span>`).join('');
-    const linkHTML = o.url
-      ? `<a class="offer-link" href="${esc(o.url)}" target="_blank" rel="noopener">Ogłoszenie ↗</a>`
-      : '';
+    const hasLink = o.url && o.url.startsWith('http');
+    const linkHTML = hasLink
+      ? `<a class="offer-link" href="${esc(o.url)}" target="_blank" rel="noopener">→ Otwórz ogłoszenie na ${esc(o.serwis || 'portalu')}</a>`
+      : `<span class="offer-link-missing">Link niedostępny — wyszukaj ręcznie: "${esc(o.tytul)}" + "${esc(o.firma)}"</span>`;
 
     card.innerHTML = `
-      <div class="offer-head">
-        <div class="offer-title">${esc(o.tytul || '—')}</div>
-        <span class="source-badge">${esc(o.serwis || '—')}</span>
+      <div class="offer-top">
+        <div class="offer-title">${esc(o.tytul)}</div>
+        <span class="src">${esc(o.serwis || '—')}</span>
       </div>
       <div class="offer-company">${esc(o.firma || 'Firma nieujawniona')}</div>
-      <div class="offer-meta">
-        <span class="meta-item">📍 ${esc(o.lokalizacja || '—')}</span>
-        ${o.baza ? `<span class="meta-item">🏢 baza: ${esc(o.baza)}</span>` : ''}
-        ${o.typ_umowy ? `<span class="meta-item">📄 ${esc(o.typ_umowy)}</span>` : ''}
-        ${o.data ? `<span class="meta-item">🕐 ${esc(o.data)}</span>` : ''}
-        ${o.wynagrodzenie ? `<span class="meta-item salary">💰 ${esc(o.wynagrodzenie)}</span>` : ''}
+      <div class="pills">
+        <span class="pill p-loc">📍 ${esc(o.lokalizacja || '—')}</span>
+        <span class="pill p-car">🚗 Auto służbowe</span>
+        ${o.wynagrodzenie ? `<span class="pill p-pay">💰 ${esc(o.wynagrodzenie)}</span>` : ''}
+        ${o.data_ogloszenia ? `<span class="pill p-date">📅 ${esc(o.data_ogloszenia)}</span>` : ''}
+        ${o.delegacje ? `<span class="pill p-del">✈️ ${esc(o.delegacje)}</span>` : ''}
+        ${o.szkolenie && o.szkolenie !== 'nie info' ? `<span class="pill p-train">🎓 ${esc(o.szkolenie)}</span>` : ''}
       </div>
-      ${o.auto_sluzbowe ? `<span class="car-badge">🚗 Auto służbowe</span>&nbsp;` : ''}
-      ${o.delegacje ? `<span class="tag">✈️ ${esc(o.delegacje)}</span>` : ''}
-      ${o.szkolenie && o.szkolenie !== 'brak info' ? `<span class="tag" style="margin-left:4px">🎓 Szkolenie: ${esc(o.szkolenie)}</span>` : ''}
-      <br><br>
-      <div class="offer-desc">${esc(o.opis || '')}</div>
-      ${o.dlaczego_pasuje ? `<div style="font-size:0.78rem;color:var(--rust);font-weight:600;margin-bottom:10px">✓ ${esc(o.dlaczego_pasuje)}</div>` : ''}
-      <div class="offer-footer">
-        <div class="offer-tags">${tagiHTML}</div>
-        ${linkHTML}
-      </div>
+      ${o.dlaczego_pasuje ? `<div class="offer-why">✓ ${esc(o.dlaczego_pasuje)}</div>` : ''}
+      ${linkHTML}
     `;
     wrap.appendChild(card);
   });
 
-  // Wskazówka
   if (d.wskazowka) {
     const tip = document.createElement('div');
-    tip.className = 'tip-card';
+    tip.className = 'tip';
     tip.innerHTML = `<strong>💡 Wskazówka:</strong> ${esc(d.wskazowka)}`;
     wrap.appendChild(tip);
-  }
-
-  // Alternatywy
-  if (d.alternatywy) {
-    const alt = document.createElement('div');
-    alt.className = 'tip-card';
-    alt.style.marginTop = '10px';
-    alt.innerHTML = `<strong>🔎 Szukaj też:</strong> ${esc(d.alternatywy)}`;
-    wrap.appendChild(alt);
   }
 }
 
 function esc(s) {
   if (!s) return '';
-  return String(s)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
 </body>
