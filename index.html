@@ -2,606 +2,665 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DesignAR – Wnętrza & Ogrody</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Praca dla Marka — Dolny Śląsk</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
 :root {
-  --cream:#f5f0e8; --sage:#7a9e7e; --sage-dark:#4a6741;
-  --terra:#c4774a; --charcoal:#2a2520; --white:#fdfaf6;
-  --glass:rgba(253,250,246,0.13); --gb:rgba(253,250,246,0.22);
+  --ink:    #0d1117;
+  --paper:  #f5f2eb;
+  --cream:  #ede9e0;
+  --rust:   #c0440a;
+  --rust2:  #e05c1a;
+  --steel:  #2d4a6e;
+  --steel2: #3d6494;
+  --muted:  #7a7060;
+  --line:   #d8d2c5;
+  --card:   #faf8f4;
+  --green:  #2a7a4b;
+  --radius: 10px;
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{width:100%;height:100%;overflow:hidden;background:var(--charcoal);font-family:'DM Sans',sans-serif;color:var(--white);user-select:none;}
 
-/* WELCOME */
-#welcome{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:linear-gradient(160deg,#1a1510 0%,#2a2018 60%,#1a1f10 100%);padding:24px;}
-.wlogo{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;letter-spacing:.1em;}
-.wlogo span{color:var(--sage);font-weight:600;}
-.wsub{font-size:13px;color:rgba(253,250,246,.4);text-align:center;line-height:1.6;}
-.wbtns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px;margin-top:8px;}
-.wb{padding:14px;border-radius:14px;border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .25s;}
-.wp{background:var(--sage);color:#fff;box-shadow:0 4px 20px rgba(122,158,126,.35);}
-.wp:active{background:var(--sage-dark);}
-.ws{background:var(--glass);color:var(--cream);border:1px solid var(--gb);backdrop-filter:blur(10px);}
-.ws:active{background:rgba(122,158,126,.2);}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* APP */
-#app{position:fixed;inset:0;display:none;flex-direction:column;}
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
 
-/* CANVAS AREA */
-#cw{position:relative;flex:1;overflow:hidden;background:#0e0c0a;display:flex;align-items:center;justify-content:center;}
-#bgC,#tC,#oC{position:absolute;inset:0;width:100%;height:100%;}
-#tC{pointer-events:none;opacity:0;transition:opacity .4s;}
-#oC{touch-action:none;}
+/* ── HEADER ─────────────────────────────── */
+.hero {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 28px 20px 24px;
+  position: relative;
+  overflow: hidden;
+}
 
-/* no photo */
-#noph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;pointer-events:none;}
-.noph-icon{font-size:52px;opacity:.3;}
-.noph-txt{font-size:13px;color:rgba(253,250,246,.3);text-align:center;}
+.hero::after {
+  content: '';
+  position: absolute;
+  right: -30px; top: -30px;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: var(--rust);
+  opacity: 0.15;
+  pointer-events: none;
+}
 
-/* TOP BAR */
-#tb{position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:linear-gradient(to bottom,rgba(14,12,10,.92) 0%,transparent 100%);pointer-events:none;}
-#tb>*{pointer-events:auto;}
-.logo{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:300;letter-spacing:.08em;}
-.logo span{color:var(--sage);font-weight:600;}
-.mtog{display:flex;gap:3px;background:rgba(0,0,0,.45);border:1px solid var(--gb);border-radius:100px;padding:3px;backdrop-filter:blur(10px);}
-.mb{padding:5px 13px;border-radius:100px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;background:transparent;color:rgba(253,250,246,.5);transition:all .25s;}
-.mb.active{background:var(--sage);color:#fff;}
-.pb{padding:6px 11px;border-radius:100px;border:1px solid var(--gb);background:rgba(0,0,0,.55);color:var(--cream);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;backdrop-filter:blur(10px);display:flex;align-items:center;gap:4px;}
-.pb:active{background:rgba(122,158,126,.3);}
+.hero-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rust2);
+  margin-bottom: 8px;
+}
 
-/* SAVE BTN */
-#saveBtn{position:absolute;bottom:8px;right:10px;z-index:25;padding:6px 12px;border-radius:100px;border:1px solid var(--gb);background:rgba(0,0,0,.6);color:var(--cream);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;backdrop-filter:blur(10px);display:flex;align-items:center;gap:4px;}
-#saveBtn:active{background:rgba(122,158,126,.3);}
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.5rem, 7vw, 2.1rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
 
-/* INDICATOR */
-#ind{position:absolute;top:52px;left:50%;transform:translateX(-50%);background:rgba(122,158,126,.92);border-radius:100px;padding:6px 14px;font-size:12px;color:#fff;z-index:25;display:none;align-items:center;gap:5px;backdrop-filter:blur(8px);white-space:nowrap;}
-#ind.on{display:flex;}
+.hero h1 em {
+  font-style: normal;
+  color: var(--rust2);
+}
 
-/* ERASE RECT */
-#er{position:absolute;border:2px dashed var(--terra);background:rgba(196,119,74,.1);border-radius:3px;pointer-events:none;display:none;z-index:10;}
+.hero-sub {
+  font-size: 0.85rem;
+  color: #a8a098;
+  line-height: 1.5;
+}
 
-/* OBJ CONTROLS */
-#oc{position:absolute;z-index:30;display:none;flex-direction:row;gap:2px;padding:4px;background:rgba(14,12,10,.93);border:1px solid var(--gb);border-radius:12px;backdrop-filter:blur(12px);}
-#oc.on{display:flex;}
-.ocb{width:36px;height:36px;border-radius:8px;border:none;background:transparent;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.ocb:active{background:rgba(122,158,126,.35);}
-.ocr:active{background:rgba(196,119,74,.35);}
+/* ── PROFIL CHIPS ────────────────────────── */
+.chips-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 14px 20px;
+  background: var(--ink);
+  border-top: 1px solid #2a2a2a;
+}
 
-/* TOAST */
-#toast{position:absolute;bottom:calc(44vh + 14px);left:50%;transform:translateX(-50%) translateY(8px);background:rgba(14,12,10,.95);border:1px solid var(--sage);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--cream);z-index:50;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;backdrop-filter:blur(10px);}
-#toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+.chip {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+}
 
-/* BOTTOM PANEL */
-#bp{background:rgba(18,14,11,.98);border-top:1px solid rgba(253,250,246,.07);z-index:20;display:flex;flex-direction:column;height:44vh;min-height:200px;max-height:360px;}
-.trow{display:flex;gap:4px;padding:7px 10px 3px;overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
-.trow::-webkit-scrollbar{display:none;}
-.tc{flex-shrink:0;display:flex;align-items:center;gap:4px;padding:6px 11px;border-radius:100px;border:1px solid rgba(253,250,246,.11);background:rgba(253,250,246,.05);color:rgba(253,250,246,.6);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;transition:all .2s;white-space:nowrap;}
-.tc.active{background:rgba(122,158,126,.25);border-color:var(--sage);color:#fff;}
-.tc:active{transform:scale(.95);}
-.tabrow{display:flex;padding:0 10px;gap:2px;flex-shrink:0;border-bottom:1px solid rgba(253,250,246,.06);}
-.tab{flex:1;padding:6px 2px;text-align:center;font-size:11px;font-family:'DM Sans',sans-serif;color:rgba(253,250,246,.38);border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;}
-.tab.active{color:var(--sage);border-bottom-color:var(--sage);}
-.iscroll{overflow-y:auto;flex:1;scrollbar-width:none;padding:6px 8px 8px;}
-.iscroll::-webkit-scrollbar{display:none;}
-.igrid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;}
-.ib{aspect-ratio:1;border-radius:10px;border:1px solid rgba(253,250,246,.09);background:rgba(253,250,246,.04);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:23px;transition:all .18s;}
-.ib span{font-size:9px;color:rgba(253,250,246,.42);font-family:'DM Sans',sans-serif;text-align:center;line-height:1.1;}
-.ib.sel{background:rgba(122,158,126,.22);border-color:var(--sage);}
-.ib:active{transform:scale(.9);}
-.cgrid{display:flex;flex-wrap:wrap;gap:7px;padding:8px 10px;}
-.cd{width:34px;height:34px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .2s;flex-shrink:0;}
-.cd.sel{border-color:#fff;box-shadow:0 0 0 2px var(--sage);transform:scale(1.1);}
-.slsec{padding:6px 14px 10px;}
-.sll{font-size:11px;color:rgba(253,250,246,.42);display:flex;justify-content:space-between;margin-bottom:5px;}
-input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:rgba(253,250,246,.14);border-radius:10px;outline:none;}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:var(--sage);cursor:pointer;}
-.hint{padding:14px;text-align:center;color:rgba(253,250,246,.32);font-size:12px;line-height:1.5;}
-#fileInput{display:none;}
+.chip-rust  { background: rgba(192,68,10,0.25); color: var(--rust2); }
+.chip-steel { background: rgba(45,74,110,0.4);  color: #7eb3e8; }
+.chip-green { background: rgba(42,122,75,0.25); color: #5ec98a; }
+
+/* ── MAIN ────────────────────────────────── */
+main { padding: 20px 16px 60px; max-width: 700px; margin: 0 auto; }
+
+/* ── API KEY ─────────────────────────────── */
+.api-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.api-row input {
+  flex: 1;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  padding: 10px 13px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.api-row input:focus { border-color: var(--steel2); }
+
+.btn-sm {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 10px 13px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.btn-sm:hover { border-color: var(--steel2); color: var(--steel); }
+
+/* ── SEARCH BUTTON ───────────────────────── */
+.search-wrap { margin-bottom: 24px; }
+
+.btn-search {
+  width: 100%;
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 16px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--rust);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-search:hover  { background: var(--rust2); }
+.btn-search:active { transform: scale(0.99); }
+.btn-search:disabled { background: #bbb; cursor: not-allowed; }
+
+/* ── STATUS ──────────────────────────────── */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.83rem;
+  color: var(--muted);
+  margin-bottom: 16px;
+  min-height: 24px;
+}
+
+.spinner {
+  width: 14px; height: 14px;
+  border: 2px solid var(--line);
+  border-top-color: var(--rust);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── ERROR ───────────────────────────────── */
+.error-box {
+  background: #fff0ec;
+  border: 1.5px solid #f5c2ad;
+  border-radius: var(--radius);
+  color: #9b3015;
+  font-size: 0.84rem;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+/* ── SUMMARY CARD ────────────────────────── */
+.summary-card {
+  background: var(--steel);
+  color: #dce8f5;
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  font-size: 0.86rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.summary-card strong { color: #fff; }
+
+/* ── SECTION HEADER ──────────────────────── */
+.section-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.section-hd h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.count-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--rust);
+  color: #fff;
+  padding: 2px 9px;
+  border-radius: 20px;
+}
+
+/* ── OFFER CARD ──────────────────────────── */
+.offer {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.offer:hover {
+  border-color: var(--rust);
+  box-shadow: 0 2px 12px rgba(192,68,10,0.08);
+}
+
+.offer-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.offer-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.25;
+  flex: 1;
+}
+
+.source-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--cream);
+  color: var(--muted);
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+}
+
+.offer-company {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--steel);
+  margin-bottom: 8px;
+}
+
+.offer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.meta-item { display: flex; align-items: center; gap: 4px; }
+
+.salary { color: var(--green); font-weight: 700; }
+.car-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--rust);
+  background: rgba(192,68,10,0.08);
+  border: 1px solid rgba(192,68,10,0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.offer-desc {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.offer-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.offer-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.tag {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--cream);
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+
+.offer-link {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--rust);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+.offer-link:hover { opacity: 0.7; }
+
+/* ── TIP ─────────────────────────────────── */
+.tip-card {
+  margin-top: 20px;
+  border-left: 3px solid var(--rust);
+  padding: 12px 14px;
+  background: var(--cream);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 0.83rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.tip-card strong { color: var(--ink); }
+
+/* ── EMPTY ───────────────────────────────── */
+.empty {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+/* ── DIVIDER ─────────────────────────────── */
+hr { border: none; border-top: 1px solid var(--line); margin: 0 0 20px; }
 </style>
 </head>
 <body>
 
-<!-- WELCOME SCREEN -->
-<div id="welcome">
-  <div class="wlogo">Design<span>AR</span></div>
-  <div class="wsub">Zrób zdjęcie swojego pokoju lub ogrodu<br>i projektuj w czasie rzeczywistym</div>
-  <div class="wbtns">
-    <button class="wb wp" onclick="triggerPhoto('camera')">📷 Zrób zdjęcie teraz</button>
-    <button class="wb ws" onclick="triggerPhoto('gallery')">🖼️ Wybierz z galerii</button>
-    <button class="wb ws" onclick="startApp()">✏️ Zacznij bez zdjęcia</button>
+<header>
+  <div class="hero">
+    <div class="hero-label">Dolny Śląsk · okolice Lwówka Śląskiego</div>
+    <h1>Praca<br>z <em>autem służbowym</em></h1>
+    <p class="hero-sub">Serwisant · Instalator · Technik terenowy<br>Firmy szukające pracowników w Twoim regionie</p>
   </div>
-</div>
+  <div class="chips-bar">
+    <span class="chip chip-rust">🚗 Auto służbowe</span>
+    <span class="chip chip-rust">📍 Do 50 km od bazy</span>
+    <span class="chip chip-steel">🔧 Bez wymaganego doświadczenia</span>
+    <span class="chip chip-steel">🏠 Brak wyjazdów zagranicznych</span>
+    <span class="chip chip-green">🪪 Kat. B · C · D</span>
+    <span class="chip chip-green">Dolny Śląsk</span>
+  </div>
+</header>
 
-<!-- MAIN APP -->
-<div id="app">
-  <div id="cw">
-    <canvas id="bgC"></canvas>
-    <canvas id="tC"></canvas>
-    <canvas id="oC"></canvas>
-    <div id="er"></div>
+<main>
 
-    <div id="noph">
-      <div class="noph-icon">📷</div>
-      <div class="noph-txt">Dotknij „Nowe zdjęcie" aby załadować<br>zdjęcie pokoju lub ogrodu</div>
-    </div>
-
-    <!-- Top bar -->
-    <div id="tb">
-      <div class="logo">Design<span>AR</span></div>
-      <div class="mtog">
-        <button class="mb active" onclick="setMode('interior')">🏠 Wnętrze</button>
-        <button class="mb" onclick="setMode('garden')">🌿 Ogród</button>
-      </div>
-      <button class="pb" onclick="triggerPhoto('camera')">📷 Nowe zdjęcie</button>
-    </div>
-
-    <!-- Selected item indicator -->
-    <div id="ind">
-      <span id="indE"></span><span id="indL"></span>
-      <span style="opacity:.55;font-size:10px;">→ dotknij zdjęcie</span>
-    </div>
-
-    <!-- Object controls -->
-    <div id="oc">
-      <button class="ocb" onclick="rotO(-20)">↺</button>
-      <button class="ocb" onclick="rotO(20)">↻</button>
-      <button class="ocb" onclick="sclO(1.15)">＋</button>
-      <button class="ocb" onclick="sclO(0.87)">－</button>
-      <button class="ocb ocr" onclick="delO()">✕</button>
-    </div>
-
-    <!-- Save button -->
-    <button id="saveBtn" onclick="screenshot()">📸 Zapisz</button>
-
-    <!-- Toast -->
-    <div id="toast"></div>
+  <div class="api-row">
+    <input type="password" id="apiKey" placeholder="Klucz API Anthropic (sk-ant-…)" />
+    <button class="btn-sm" onclick="toggleKey()">Pokaż</button>
   </div>
 
-  <!-- BOTTOM PANEL -->
-  <div id="bp">
-    <div class="trow" id="trow"></div>
-    <div class="tabrow" id="tabrow"></div>
-    <div class="iscroll" id="iscroll"></div>
+  <div class="search-wrap">
+    <button class="btn-search" id="searchBtn" onclick="doSearch()">
+      🔍 Szukaj ofert teraz
+    </button>
   </div>
-</div>
 
-<input type="file" id="fileInput" accept="image/*" capture="environment">
+  <div class="status" id="statusBar"></div>
+  <div id="errorBox"></div>
+  <div id="results"></div>
+
+</main>
 
 <script>
-// ── DATA ──────────────────────────────────────
-const INT_TABS = {
-  'Meble':[
-    {e:'🛋️',l:'Sofa'},{e:'🪑',l:'Fotel'},{e:'🛏️',l:'Łóżko'},
-    {e:'📺',l:'TV'},{e:'💡',l:'Lampa'},{e:'🪴',l:'Roślina'},
-    {e:'🖼️',l:'Obraz'},{e:'🪞',l:'Lustro'},{e:'🛁',l:'Wanna'},
-    {e:'🚿',l:'Prysznic'},{e:'🍳',l:'Kuchnia'},{e:'🚪',l:'Drzwi'},
-    {e:'📚',l:'Regał'},{e:'🪣',l:'Kosz'},{e:'🛺',l:'Szafka'},
-  ],
-  'Dekor':[
-    {e:'🕯️',l:'Świeca'},{e:'🏺',l:'Wazon'},{e:'⏰',l:'Zegar'},
-    {e:'🧸',l:'Maskotka'},{e:'🪆',l:'Figurka'},{e:'🌵',l:'Kaktus'},
-    {e:'🍃',l:'Liście'},{e:'🧺',l:'Koszyk'},{e:'📿',l:'Girlanda'},
-    {e:'🎨',l:'Obraz'},{e:'🌿',l:'Gałązka'},{e:'🎍',l:'Bambus'},
-  ],
-};
-const GAR_TABS = {
-  'Rośliny':[
-    {e:'🌹',l:'Róże'},{e:'🌷',l:'Tulipany'},{e:'🌻',l:'Słoneczniki'},
-    {e:'🌺',l:'Kwiaty'},{e:'🌸',l:'Wiśnie'},{e:'🪻',l:'Lawenda'},
-    {e:'🌳',l:'Drzewo'},{e:'🌲',l:'Świerk'},{e:'🎋',l:'Bambus'},
-    {e:'🌿',l:'Trawa'},{e:'🍀',l:'Koniczyna'},{e:'🌾',l:'Trawy ozd.'},
-  ],
-  'Architektura':[
-    {e:'⛲',l:'Fontanna'},{e:'🏡',l:'Altana'},{e:'🚪',l:'Brama'},
-    {e:'🪨',l:'Kamienie'},{e:'🧱',l:'Murki'},{e:'🪵',l:'Płot'},
-    {e:'⛺',l:'Pergola'},{e:'🏊',l:'Oczko'},{e:'🛤️',l:'Ścieżka'},
-  ],
-  'Dekoracje':[
-    {e:'🪔',l:'Latarnia'},{e:'🏮',l:'Lampion'},{e:'🪑',l:'Ławka'},
-    {e:'🫧',l:'Wodospad'},{e:'🪆',l:'Figurka'},{e:'⛱️',l:'Parasol'},
-    {e:'🔔',l:'Dzwonek'},{e:'🌡️',l:'Termometr'},{e:'🎑',l:'Ornament'},
-  ],
-};
-const WCOLS = [
-  {c:'#f5f0e8',l:'Krem'},{c:'#e8ddd0',l:'Beż'},{c:'#d4c5b0',l:'Piasek'},
-  {c:'#b8d4c8',l:'Mięta'},{c:'#8fb8a8',l:'Szałwia'},{c:'#6a9e8a',l:'Zieleń'},
-  {c:'#c8d4e8',l:'Błękit'},{c:'#9ab0cc',l:'Niebieski'},{c:'#7090b8',l:'Granat'},
-  {c:'#e8c8c8',l:'Różowy'},{c:'#d4a0a0',l:'Łosoś'},{c:'#b87878',l:'Ceglasty'},
-  {c:'#e8e0c8',l:'Słomka'},{c:'#d4c890',l:'Złoty'},{c:'#b8a850',l:'Oliwka'},
-  {c:'#e0c8e8',l:'Liliowy'},{c:'#c8a0d4',l:'Fiolet'},{c:'#a870c0',l:'Śliwka'},
-  {c:'#2a2520',l:'Grafit'},{c:'#555050',l:'Ciemny'},{c:'#ffffff',l:'Biel'},
-];
-const GCOLS = [
-  {c:'#4a7c3f',l:'Trawa'},{c:'#6a9e5a',l:'Zieleń'},{c:'#8abf70',l:'Łąka'},
-  {c:'#8b7355',l:'Ziemia'},{c:'#6b5a3a',l:'Gleba'},{c:'#a08060',l:'Piach'},
-  {c:'#c8b878',l:'Słoma'},{c:'#9090a0',l:'Kamień'},{c:'#707080',l:'Beton'},
-];
+const $ = id => document.getElementById(id);
 
-// ── STATE ─────────────────────────────────────
-let mode='interior', tool='place';
-let bgImg=null, bgOff={x:0,y:0,w:0,h:0};
-let objs=[], selObj=null, selItem=null;
-let wallCol=null, wallOp=0.35;
-
-// touch state
-let dragObj=null,dox=0,doy=0,pStart=null,didDrag=false;
-let erasing=false,erP1=null;
-
-// ── CANVASES ──────────────────────────────────
-const bgC=document.getElementById('bgC'), bgX=bgC.getContext('2d');
-const tC=document.getElementById('tC'),  tX=tC.getContext('2d');
-const oC=document.getElementById('oC'),  oX=oC.getContext('2d');
-const cw=document.getElementById('cw');
-
-function resize(){
-  const W=cw.clientWidth,H=cw.clientHeight;
-  [bgC,tC,oC].forEach(c=>{c.width=W;c.height=H;});
-  drawBg(); drawTint(); drawObjs();
+// Klucz API — zapamiętaj
+function toggleKey() {
+  const k = $('apiKey');
+  k.type = k.type === 'password' ? 'text' : 'password';
 }
-window.addEventListener('resize',resize);
-
-function drawBg(){
-  const W=bgC.width,H=bgC.height;
-  bgX.clearRect(0,0,W,H);
-  if(!bgImg)return;
-  const s=Math.min(W/bgImg.naturalWidth,H/bgImg.naturalHeight);
-  const dw=bgImg.naturalWidth*s,dh=bgImg.naturalHeight*s;
-  bgOff={x:(W-dw)/2,y:(H-dh)/2,w:dw,h:dh};
-  bgX.drawImage(bgImg,bgOff.x,bgOff.y,dw,dh);
-}
-function drawTint(){
-  const W=tC.width,H=tC.height;
-  tX.clearRect(0,0,W,H);
-  if(!wallCol){tC.style.opacity=0;return;}
-  tX.fillStyle=wallCol; tX.fillRect(0,0,W,H);
-  tC.style.opacity=wallOp;
-}
-function drawObjs(){
-  const W=oC.width,H=oC.height;
-  oX.clearRect(0,0,W,H);
-  objs.forEach(o=>{
-    oX.save();
-    oX.translate(o.x,o.y);
-    oX.rotate(o.rot*Math.PI/180);
-    oX.scale(o.sc,o.sc);
-    oX.shadowColor='rgba(0,0,0,0.5)';
-    oX.shadowBlur=16;
-    oX.shadowOffsetY=7;
-    oX.font='56px serif';
-    oX.textAlign='center';
-    oX.textBaseline='middle';
-    oX.fillText(o.e,0,0);
-    if(o===selObj){
-      oX.shadowBlur=0;
-      oX.strokeStyle='rgba(122,158,126,1)';
-      oX.lineWidth=2.5/o.sc;
-      oX.setLineDash([5,3]);
-      oX.strokeRect(-38,-38,76,76);
-      oX.setLineDash([]);
-    }
-    oX.restore();
-  });
-}
-
-// ── PHOTO ─────────────────────────────────────
-function triggerPhoto(src){
-  const fi=document.getElementById('fileInput');
-  if(src==='camera') fi.setAttribute('capture','environment');
-  else fi.removeAttribute('capture');
-  fi.click();
-}
-document.getElementById('fileInput').addEventListener('change',function(e){
-  const f=e.target.files[0]; if(!f)return;
-  const url=URL.createObjectURL(f);
-  const img=new Image();
-  img.onload=()=>{
-    bgImg=img;
-    document.getElementById('noph').style.display='none';
-    startApp();
-    setTimeout(resize,50);
-    toast('✅ Zdjęcie załadowane! Wybierz mebel i dotknij zdjęcie.');
-  };
-  img.src=url; e.target.value='';
+try { $('apiKey').value = localStorage.getItem('ant_key') || ''; } catch(e){}
+$('apiKey').addEventListener('change', () => {
+  try { localStorage.setItem('ant_key', $('apiKey').value.trim()); } catch(e){}
 });
 
-function startApp(){
-  document.getElementById('welcome').style.display='none';
-  const app=document.getElementById('app');
-  app.style.display='flex';
-  app.style.flexDirection='column';
-  buildPanel();
-  setupTouch();
-  setTimeout(resize,30);
+function setStatus(msg, spin = false) {
+  $('statusBar').innerHTML = msg
+    ? (spin ? `<div class="spinner"></div>${msg}` : msg)
+    : '';
+}
+function showError(msg) {
+  $('errorBox').innerHTML = msg
+    ? `<div class="error-box">⚠️ ${msg}</div>` : '';
 }
 
-// ── PANEL ─────────────────────────────────────
-const INT_TOOLS=[
-  {id:'place',ic:'➕',lb:'Dodaj mebel'},
-  {id:'move', ic:'✋',lb:'Przesuń'},
-  {id:'paint',ic:'🎨',lb:'Kolor ściany'},
-  {id:'erase',ic:'🪄',lb:'Ukryj mebel'},
-  {id:'delete',ic:'🗑️',lb:'Usuń'},
-];
-const GAR_TOOLS=[
-  {id:'place',ic:'➕',lb:'Dodaj element'},
-  {id:'move', ic:'✋',lb:'Przesuń'},
-  {id:'paint',ic:'🌱',lb:'Kolor podłoża'},
-  {id:'delete',ic:'🗑️',lb:'Usuń'},
-];
+// ── Prompt skrojony pod Marka ─────────────────────────────────────────────
+const SYSTEM_PROMPT = `Jesteś specjalistycznym asystentem do wyszukiwania pracy dla Marka — mieszkańca Lwówka Śląskiego (Dolny Śląsk, Polska).
 
-function buildPanel(){ buildTools(); buildContent(); }
+PROFIL UŻYTKOWNIKA:
+- Mieszka w Lwówku Śląskim, powiat lwówecki, woj. dolnośląskie
+- Prawo jazdy: kat. B, C i D (duże doświadczenie w prowadzeniu pojazdów)
+- Brak doświadczenia technicznego, ale jest praktyczny i chętny do nauki
+- Nie może pracować fizycznie wyczerpująco
+- NIE chce wyjazdów zagranicznych ani tygodniowych delegacji w trasie
+- Sporadyczne jednodniowe delegacje krajowe są OK
+- Baza/siedziba firmy: do 50 km od Lwówka Śląskiego (np. Jelenia Góra, Złotoryja, Bolesławiec, Zgorzelec, Gryfów Śląski, Lubań)
+- Alternatywnie: firmy z innych miast (np. Wrocław, Legnica), które obsługują region Dolnego Śląska i dają auto służbowe do dojazdów z domu
 
-function buildTools(){
-  const row=document.getElementById('trow');
-  row.innerHTML='';
-  (mode==='interior'?INT_TOOLS:GAR_TOOLS).forEach(t=>{
-    const b=document.createElement('button');
-    b.className='tc'+(t.id===tool?' active':'');
-    b.innerHTML=t.ic+' '+t.lb;
-    b.onclick=()=>setTool(t.id);
-    row.appendChild(b);
-  });
-}
+POSZUKIWANE STANOWISKA (priorytetowo):
+1. Serwisant / technik terenowy (urządzenia, maszyny, systemy — np. automaty vendingowe, systemy alarmowe, dźwigi, klimatyzacje, kotły, pompy ciepła, fotowoltaika, kasy fiskalne, bankomaty)
+2. Instalator (alarmy, CCTV, klimatyzacja, fotowoltaika, sieci, domofony)
+3. Technik serwisu z obsługą klienta
+4. Każda inna rola z autem służbowym i pracą w terenie na Dolnym Śląsku
 
-function buildContent(){
-  const tabs=mode==='interior'?INT_TABS:GAR_TABS;
-  const tabrow=document.getElementById('tabrow');
-  const scroll=document.getElementById('iscroll');
-  tabrow.innerHTML=''; scroll.innerHTML='';
+WYMAGANIA BEZWZGLĘDNE w każdej ofercie:
+- Samochód służbowy (auto do dojazdów do klientów lub do dyspozycji)
+- Brak wymaganego doświadczenia technicznego (lub firma szkoli od podstaw)
+- Praca na Dolnym Śląsku / w regionie Lwówka Śląskiego
+- Brak stałych wyjazdów zagranicznych
 
-  if(tool==='paint'){
-    tabrow.style.display='none';
-    buildColors(scroll);
-    return;
-  }
-  if(tool==='move'||tool==='delete'||tool==='erase'){
-    tabrow.style.display='none';
-    scroll.innerHTML=`<div class="hint">${
-      tool==='move'?'Dotknij element na zdjęciu i przeciągnij go w nowe miejsce.':
-      tool==='delete'?'Dotknij element na zdjęciu aby go usunąć.':
-      'Przeciągnij palcem na zdjęciu aby ukryć prawdziwy mebel.\nNastępnie wstaw wirtualny mebel na to miejsce.'
-    }</div>`;
-    return;
-  }
+Przeszukaj polskie serwisy ogłoszeniowe: Pracuj.pl, OLX Praca, Indeed Polska, LinkedIn, Praca.pl, GoWork.pl, Aplikuj.pl, Jooble.
 
-  tabrow.style.display='flex';
-  const names=Object.keys(tabs);
-  names.forEach((n,i)=>{
-    const b=document.createElement('button');
-    b.className='tab'+(i===0?' active':'');
-    b.textContent=n;
-    b.onclick=()=>{
-      document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',j===i));
-      buildGrid(scroll,tabs[names[i]]);
-    };
-    tabrow.appendChild(b);
-  });
-  buildGrid(scroll,tabs[names[0]]);
-}
+Odpowiedz WYŁĄCZNIE poprawnym JSON, zero tekstu przed ani po:
 
-function buildGrid(container,items){
-  container.innerHTML='';
-  const g=document.createElement('div');
-  g.className='igrid';
-  items.forEach(item=>{
-    const b=document.createElement('div');
-    b.className='ib'+(selItem&&selItem.e===item.e?' sel':'');
-    b.innerHTML=item.e+'<span>'+item.l+'</span>';
-    b.onclick=()=>pickItem(item);
-    g.appendChild(b);
-  });
-  container.appendChild(g);
-}
-
-function buildColors(container){
-  const cols=mode==='interior'?WCOLS:GCOLS;
-  container.innerHTML='';
-  const g=document.createElement('div');
-  g.className='cgrid';
-  cols.forEach(({c,l})=>{
-    const d=document.createElement('div');
-    d.className='cd'+(wallCol===c?' sel':'');
-    d.style.background=c; d.title=l;
-    d.onclick=()=>{
-      wallCol=c; wallOp=parseFloat(document.getElementById('opSl')?.value||35)/100;
-      container.querySelectorAll('.cd').forEach(x=>x.classList.remove('sel'));
-      d.classList.add('sel');
-      drawTint(); toast('🎨 '+l);
-    };
-    g.appendChild(d);
-  });
-  container.appendChild(g);
-
-  const s=document.createElement('div');
-  s.className='slsec';
-  s.innerHTML=`<div class="sll"><span>Intensywność</span><span id="opVal">${Math.round(wallOp*100)}%</span></div>
-  <input type="range" id="opSl" min="5" max="85" value="${Math.round(wallOp*100)}">
-  <div style="margin-top:8px;display:flex;gap:6px;">
-    <button onclick="wallCol=null;drawTint();toast('Kolor usunięty');" style="flex:1;padding:6px;border-radius:8px;border:1px solid rgba(253,250,246,.12);background:rgba(196,119,74,.12);color:var(--terra);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;">✕ Usuń kolor ściany</button>
-  </div>`;
-  container.appendChild(s);
-  document.getElementById('opSl').oninput=function(){
-    wallOp=this.value/100;
-    document.getElementById('opVal').textContent=this.value+'%';
-    drawTint();
-  };
-}
-
-// ── TOOL / MODE / ITEM ────────────────────────
-function setTool(t){
-  tool=t; selItem=null; selObj=null;
-  hideOC(); drawObjs();
-  document.getElementById('ind').classList.remove('on');
-  buildPanel();
-}
-function setMode(m){
-  mode=m; tool='place'; selItem=null; selObj=null;
-  wallCol=null; drawTint(); hideOC();
-  document.querySelectorAll('.mb').forEach((b,i)=>b.classList.toggle('active',(i===0&&m==='interior')||(i===1&&m==='garden')));
-  document.getElementById('ind').classList.remove('on');
-  buildPanel();
-  toast(m==='interior'?'🏠 Tryb wnętrza':'🌿 Tryb ogrodu');
-}
-function pickItem(item){
-  selItem=item; tool='place';
-  document.querySelectorAll('.ib').forEach(b=>b.classList.toggle('sel',b.textContent.includes(item.e)));
-  document.getElementById('indE').textContent=item.e;
-  document.getElementById('indL').textContent=item.l;
-  document.getElementById('ind').classList.add('on');
-  buildTools();
-  toast(item.e+' '+item.l+' — dotknij zdjęcie aby umieścić');
-}
-
-// ── TOUCH ─────────────────────────────────────
-function setupTouch(){
-  oC.addEventListener('touchstart',tStart,{passive:false});
-  oC.addEventListener('touchmove', tMove, {passive:false});
-  oC.addEventListener('touchend',  tEnd,  {passive:false});
-  oC.addEventListener('mousedown', e=>tStart({touches:[e],preventDefault:()=>{},stopPropagation:()=>{}}));
-  oC.addEventListener('mousemove', e=>tMove({touches:[e],preventDefault:()=>{},stopPropagation:()=>{}}));
-  oC.addEventListener('mouseup',   e=>tEnd({changedTouches:[e],preventDefault:()=>{},stopPropagation:()=>{}}));
-}
-
-function cpos(t){
-  const r=oC.getBoundingClientRect();
-  return{x:t.clientX-r.left,y:t.clientY-r.top};
-}
-function findO(x,y){
-  for(let i=objs.length-1;i>=0;i--){
-    const o=objs[i];
-    if(Math.hypot(x-o.x,y-o.y)<42*o.sc) return o;
-  }
-  return null;
-}
-
-function tStart(e){
-  e.preventDefault();
-  const p=cpos(e.touches[0]);
-  pStart=p; didDrag=false;
-
-  if(tool==='erase'){
-    erasing=true; erP1=p;
-    const er=document.getElementById('er');
-    er.style.cssText=`display:block;left:${p.x}px;top:${p.y}px;width:0;height:0;`;
-    return;
-  }
-
-  const o=findO(p.x,p.y);
-  if(o){
-    if(tool==='delete'){
-      objs=objs.filter(x=>x!==o);
-      selObj=null; hideOC(); drawObjs();
-      toast('🗑️ Usunięty');
-    } else {
-      dragObj=o; dox=p.x-o.x; doy=p.y-o.y;
-      selObj=o; showOC(p.x,p.y); drawObjs();
+{
+  "summary": "2-3 zdania o sytuacji na rynku dla tego profilu w regionie",
+  "oferty": [
+    {
+      "tytul": "dokładna nazwa stanowiska z ogłoszenia",
+      "firma": "nazwa firmy",
+      "lokalizacja": "miasto, województwo",
+      "baza": "gdzie jest siedziba / skąd wychodzi trasa",
+      "serwis": "nazwa portalu z ogłoszeniem",
+      "url": "link do ogłoszenia lub pusty string",
+      "wynagrodzenie": "widełki lub pusty string",
+      "typ_umowy": "UoP / B2B / UZ / inny",
+      "auto_sluzbowe": true,
+      "delegacje": "opis charakteru delegacji (np. brak, sporadyczne krajowe, itp.)",
+      "szkolenie": "czy firma szkoli — tak/nie/brak info",
+      "opis": "2-3 zdania o obowiązkach i czego szukają",
+      "dlaczego_pasuje": "1 zdanie dlaczego ta oferta pasuje dla Marka",
+      "tagi": ["tag1", "tag2"],
+      "data": "kiedy dodano np. 2 dni temu lub pusty string"
     }
-  }
+  ],
+  "wskazowka": "1 konkretna praktyczna rada dla Marka jak zwiększyć szansę na tę pracę",
+  "alternatywy": "jeśli mało wyników — jakich słów kluczowych szukać samodzielnie"
 }
 
-function tMove(e){
-  e.preventDefault();
-  const p=cpos(e.touches[0]);
-  if(pStart&&Math.hypot(p.x-pStart.x,p.y-pStart.y)>6) didDrag=true;
+Zwróć 3-10 ofert. Jeśli nie ma dokładnych trafień dla Lwówka, szukaj firm z Dolnego Śląska dających auto służbowe pracownikom terenowym.`;
 
-  if(erasing&&erP1){
-    const x=Math.min(p.x,erP1.x),y=Math.min(p.y,erP1.y);
-    const w=Math.abs(p.x-erP1.x),h=Math.abs(p.y-erP1.y);
-    const er=document.getElementById('er');
-    er.style.left=x+'px';er.style.top=y+'px';er.style.width=w+'px';er.style.height=h+'px';
-    return;
-  }
-  if(dragObj){
-    didDrag=true;
-    dragObj.x=p.x-dox; dragObj.y=p.y-doy;
-    showOC(p.x,p.y-75);
-    drawObjs();
-  }
-}
+async function doSearch() {
+  const apiKey = $('apiKey').value.trim();
+  if (!apiKey) { showError('Wklej klucz API Anthropic.'); return; }
 
-function tEnd(e){
-  e.preventDefault();
-  const p=cpos(e.changedTouches[0]);
+  try { localStorage.setItem('ant_key', apiKey); } catch(e){}
 
-  if(erasing&&erP1){
-    erasing=false;
-    document.getElementById('er').style.display='none';
-    const x=Math.min(p.x,erP1.x),y=Math.min(p.y,erP1.y);
-    const w=Math.abs(p.x-erP1.x),h=Math.abs(p.y-erP1.y);
-    erP1=null; dragObj=null;
-    if(w>15&&h>15) doErase(x,y,w,h);
-    else toast('Narysuj większy prostokąt na meblu');
-    return;
-  }
+  showError('');
+  $('results').innerHTML = '';
+  $('searchBtn').disabled = true;
 
-  dragObj=null;
+  const steps = [
+    'Szukam ofert serwisanta i instalatora…',
+    'Przeszukuję Pracuj.pl, OLX, Indeed…',
+    'Sprawdzam wymagania i auta służbowe…',
+    'Filtruję pod Twój profil…',
+    'Prawie gotowe…'
+  ];
+  let si = 0;
+  setStatus(steps[0], true);
+  const iv = setInterval(() => {
+    si = (si + 1) % steps.length;
+    setStatus(steps[si], true);
+  }, 3500);
 
-  if(!didDrag){
-    if(tool==='place'&&selItem){
-      const o={e:selItem.e,l:selItem.l,x:p.x,y:p.y,sc:1,rot:0};
-      objs.push(o); selObj=o;
-      showOC(p.x,p.y-75); drawObjs();
-      toast(selItem.e+' '+selItem.l+' dodany!');
-    } else {
-      const o=findO(p.x,p.y);
-      if(o){selObj=o;showOC(p.x,p.y);drawObjs();}
-      else{selObj=null;hideOC();drawObjs();}
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 4000,
+        system: SYSTEM_PROMPT,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{
+          role: 'user',
+          content: 'Znajdź aktualne oferty pracy pasujące do mojego profilu. Dzisiejsza data: ' + new Date().toLocaleDateString('pl-PL') + '. Szukaj najświeższych ogłoszeń.'
+        }]
+      })
+    });
+
+    clearInterval(iv);
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${resp.status}`);
     }
+
+    const data = await resp.json();
+    const rawText = data.content
+      .filter(b => b.type === 'text')
+      .map(b => b.text)
+      .join('\n');
+
+    setStatus('');
+
+    let parsed = null;
+    try {
+      const clean = rawText.replace(/```json|```/g, '').trim();
+      const m = clean.match(/\{[\s\S]*\}/);
+      if (m) parsed = JSON.parse(m[0]);
+    } catch(e) {}
+
+    if (parsed && parsed.oferty) {
+      render(parsed);
+    } else {
+      $('results').innerHTML = `<div class="summary-card" style="white-space:pre-wrap">${esc(rawText)}</div>`;
+    }
+
+  } catch(err) {
+    clearInterval(iv);
+    setStatus('');
+    showError(err.message || 'Błąd połączenia z API.');
+  } finally {
+    $('searchBtn').disabled = false;
   }
-  didDrag=false;
 }
 
-// ── OBJ CONTROLS ─────────────────────────────
-function showOC(x,y){
-  const oc=document.getElementById('oc');
-  oc.classList.add('on');
-  const W=cw.clientWidth,H=cw.clientHeight;
-  oc.style.left=Math.max(8,Math.min(x-90,W-195))+'px';
-  oc.style.top= Math.max(52,Math.min(y-50,H-55))+'px';
-}
-function hideOC(){document.getElementById('oc').classList.remove('on');}
-function rotO(d){if(!selObj)return;selObj.rot=(selObj.rot+d)%360;drawObjs();}
-function sclO(f){if(!selObj)return;selObj.sc=Math.max(.2,Math.min(4,selObj.sc*f));drawObjs();}
-function delO(){if(!selObj)return;objs=objs.filter(o=>o!==selObj);selObj=null;hideOC();drawObjs();toast('🗑️ Usunięty');}
+function render(d) {
+  const wrap = $('results');
+  wrap.innerHTML = '';
 
-// ── ERASE ─────────────────────────────────────
-function doErase(x,y,w,h){
-  const fill=wallCol||'#c8bfae';
-  bgX.fillStyle=fill; bgX.fillRect(x,y,w,h);
-  bgX.strokeStyle='rgba(255,255,255,0.07)'; bgX.lineWidth=1;
-  bgX.setLineDash([4,4]); bgX.strokeRect(x+1,y+1,w-2,h-2); bgX.setLineDash([]);
-  bgX.font='11px DM Sans,sans-serif'; bgX.fillStyle='rgba(255,255,255,0.25)';
-  bgX.textAlign='center'; bgX.textBaseline='middle';
-  bgX.fillText('✦',x+w/2,y+h/2);
-  toast('🪄 Ukryto! Teraz wstaw wirtualny mebel na to miejsce.');
-}
+  // Podsumowanie
+  if (d.summary) {
+    const s = document.createElement('div');
+    s.className = 'summary-card';
+    s.innerHTML = d.summary;
+    wrap.appendChild(s);
+  }
 
-// ── SCREENSHOT ────────────────────────────────
-function screenshot(){
-  const W=bgC.width,H=bgC.height;
-  const out=document.createElement('canvas');
-  out.width=W; out.height=H;
-  const ctx=out.getContext('2d');
-  ctx.drawImage(bgC,0,0);
-  if(wallCol){ctx.globalAlpha=wallOp;ctx.fillStyle=wallCol;ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;}
-  ctx.drawImage(oC,0,0);
-  out.toBlob(blob=>{
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download='DesignAR_'+Date.now()+'.png';
-    a.click();
-    toast('📸 Projekt zapisany!');
+  // Nagłówek sekcji
+  const hd = document.createElement('div');
+  hd.className = 'section-hd';
+  hd.innerHTML = `<h2>Znalezione oferty</h2><span class="count-badge">${d.oferty.length}</span>`;
+  wrap.appendChild(hd);
+
+  // Karty ofert
+  d.oferty.forEach(o => {
+    const card = document.createElement('div');
+    card.className = 'offer';
+
+    const tagiHTML = (o.tagi || []).map(t => `<span class="tag">${esc(t)}</span>`).join('');
+    const linkHTML = o.url
+      ? `<a class="offer-link" href="${esc(o.url)}" target="_blank" rel="noopener">Ogłoszenie ↗</a>`
+      : '';
+
+    card.innerHTML = `
+      <div class="offer-head">
+        <div class="offer-title">${esc(o.tytul || '—')}</div>
+        <span class="source-badge">${esc(o.serwis || '—')}</span>
+      </div>
+      <div class="offer-company">${esc(o.firma || 'Firma nieujawniona')}</div>
+      <div class="offer-meta">
+        <span class="meta-item">📍 ${esc(o.lokalizacja || '—')}</span>
+        ${o.baza ? `<span class="meta-item">🏢 baza: ${esc(o.baza)}</span>` : ''}
+        ${o.typ_umowy ? `<span class="meta-item">📄 ${esc(o.typ_umowy)}</span>` : ''}
+        ${o.data ? `<span class="meta-item">🕐 ${esc(o.data)}</span>` : ''}
+        ${o.wynagrodzenie ? `<span class="meta-item salary">💰 ${esc(o.wynagrodzenie)}</span>` : ''}
+      </div>
+      ${o.auto_sluzbowe ? `<span class="car-badge">🚗 Auto służbowe</span>&nbsp;` : ''}
+      ${o.delegacje ? `<span class="tag">✈️ ${esc(o.delegacje)}</span>` : ''}
+      ${o.szkolenie && o.szkolenie !== 'brak info' ? `<span class="tag" style="margin-left:4px">🎓 Szkolenie: ${esc(o.szkolenie)}</span>` : ''}
+      <br><br>
+      <div class="offer-desc">${esc(o.opis || '')}</div>
+      ${o.dlaczego_pasuje ? `<div style="font-size:0.78rem;color:var(--rust);font-weight:600;margin-bottom:10px">✓ ${esc(o.dlaczego_pasuje)}</div>` : ''}
+      <div class="offer-footer">
+        <div class="offer-tags">${tagiHTML}</div>
+        ${linkHTML}
+      </div>
+    `;
+    wrap.appendChild(card);
   });
+
+  // Wskazówka
+  if (d.wskazowka) {
+    const tip = document.createElement('div');
+    tip.className = 'tip-card';
+    tip.innerHTML = `<strong>💡 Wskazówka:</strong> ${esc(d.wskazowka)}`;
+    wrap.appendChild(tip);
+  }
+
+  // Alternatywy
+  if (d.alternatywy) {
+    const alt = document.createElement('div');
+    alt.className = 'tip-card';
+    alt.style.marginTop = '10px';
+    alt.innerHTML = `<strong>🔎 Szukaj też:</strong> ${esc(d.alternatywy)}`;
+    wrap.appendChild(alt);
+  }
 }
 
-// ── TOAST ─────────────────────────────────────
-let tT;
-function toast(msg){
-  const el=document.getElementById('toast');
-  el.textContent=msg; el.classList.add('on');
-  clearTimeout(tT); tT=setTimeout(()=>el.classList.remove('on'),2800);
+function esc(s) {
+  if (!s) return '';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
 }
 </script>
 </body>
